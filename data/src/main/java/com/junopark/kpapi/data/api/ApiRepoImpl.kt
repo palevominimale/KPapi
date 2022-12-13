@@ -86,5 +86,4 @@ class ApiRepoImpl : ApiRepo {
     override suspend fun getReleases(year: Int, month: String, page: Int) =
         apiState.emit(handleApi { retrofit.getReleases(year, month, page) })
 
-
 }

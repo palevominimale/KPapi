@@ -19,15 +19,15 @@ interface ApiRepo {
 
     val state : StateFlow<ApiResult>
 
-    suspend fun getTop(type: String, page: Int)
-    suspend fun getById(id: Int)
-    suspend fun getSeasons(id: Int)
-    suspend fun getFacts(id: Int)
-    suspend fun getDistributions(id: Int)
-    suspend fun getBoxOffice(id: Int)
-    suspend fun getAwards(id: Int)
-    suspend fun getSimilar(id: Int)
-    suspend fun getRelated(id: Int)
+    suspend fun getTop(type: String = TOP_250, page: Int = 1)
+    suspend fun getById(id: Int = DEFAULT_ID)
+    suspend fun getSeasons(id: Int = DEFAULT_ID)
+    suspend fun getFacts(id: Int = DEFAULT_ID)
+    suspend fun getDistributions(id: Int = DEFAULT_ID)
+    suspend fun getBoxOffice(id: Int = DEFAULT_ID)
+    suspend fun getAwards(id: Int = DEFAULT_ID)
+    suspend fun getSimilar(id: Int = DEFAULT_ID)
+    suspend fun getRelated(id: Int = DEFAULT_ID)
     suspend fun getFilters()
     suspend fun getByFilter(
         countries : String = "",
@@ -55,6 +55,8 @@ interface ApiRepo {
     companion object {
         const val DEFAULT_ORDER = "RATING"
         const val DEFAULT_TYPE = "FILM"
+        const val DEFAULT_ID = 301
+        const val TOP_250 = "TOP_250_BEST_FILMS"
     }
 
 }

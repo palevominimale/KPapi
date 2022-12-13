@@ -1,6 +1,7 @@
 package com.junopark.kpapi.data.api
 
 
+import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.awards.AwardsResponse
 import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
 import com.junopark.kpapi.entities.distribution.DistributionResponse
@@ -24,7 +25,7 @@ interface ApiRequest {
     fun getTop(
         @Query("type") type: String = TOP_250,
         @Query("page") page: Int = 1,
-    ): Call<com.junopark.kpapi.entities.ListResponse>
+    ): Call<ListResponse>
 
     @GET("films/{id}")
     fun getById(@Path("id") id: Int) : Call<FilmItemBig>
