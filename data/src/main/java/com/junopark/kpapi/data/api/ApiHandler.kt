@@ -5,17 +5,16 @@ package com.junopark.kpapi.data.api
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.HttpException
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiHandler() {
+class ApiHandler {
 
-    private suspend fun <T: Any> handleApi(
-        execute: () -> Response<T>
+    private suspend fun <T> handleApi(
+        execute: () -> Call<T>
     ) : ApiResult {
         return try {
-            val response = execute()
+            val response = execute.invoke().execute()
             val body = response.body()
             if(response.isSuccessful && body != null) {
                 ApiResult.ApiSuccess(data = body)
@@ -46,14 +45,6 @@ class ApiHandler() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiRequest::class.java)
-    }
-
-    suspend fun execute(request: () -> Call<*>) : ApiResult {
-        return when(val res = handleApi { request.invoke().execute() } ) {
-            is ApiResult.ApiSuccess -> ApiResult.ApiSuccess(data = res.data)
-            is ApiResult.ApiError -> ApiResult.ApiError(code = res.code, message = res.message)
-            is ApiResult.ApiException -> ApiResult.ApiException(e = res.e)
-        }
     }
 
 }
