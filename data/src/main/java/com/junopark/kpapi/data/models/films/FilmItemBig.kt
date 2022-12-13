@@ -1,8 +1,10 @@
-package com.junopark.kpapi.data.models
+package com.junopark.kpapi.data.models.films
 
 import com.google.gson.annotations.SerializedName
+import com.junopark.kpapi.data.models.common.CountryItem
+import com.junopark.kpapi.data.models.common.GenreItem
 
-data class Film(
+data class FilmItemBig(
     @SerializedName("kinopoiskId"                ) var kinopoiskId                : Int?                 = null,
     @SerializedName("filmId"                     ) var filmId                     : Int?                 = null,
     @SerializedName("imdbId"                     ) var imdbId                     : String?              = null,
@@ -28,7 +30,7 @@ data class Film(
     @SerializedName("ratingRfCriticsVoteCount"   ) var ratingRfCriticsVoteCount   : Int?                 = null,
     @SerializedName("webUrl"                     ) var webUrl                     : String?              = null,
     @SerializedName("year"                       ) var year                       : Int?                 = null,
-    @SerializedName("filmLength"                 ) var filmLength                 : Int?                 = null,
+    @SerializedName("filmLength"                 ) var filmLength                 : String?              = null,
     @SerializedName("slogan"                     ) var slogan                     : String?              = null,
     @SerializedName("description"                ) var description                : String?              = null,
     @SerializedName("shortDescription"           ) var shortDescription           : String?              = null,
@@ -41,8 +43,8 @@ data class Film(
     @SerializedName("hasImax"                    ) var hasImax                    : Boolean?             = null,
     @SerializedName("has3D"                      ) var has3D                      : Boolean?             = null,
     @SerializedName("lastSync"                   ) var lastSync                   : String?              = null,
-    @SerializedName("countries"                  ) var countries                  : ArrayList<Country>   = arrayListOf(),
-    @SerializedName("genres"                     ) var genres                     : ArrayList<Genre>     = arrayListOf(),
+    @SerializedName("countries"                  ) var countries                  : ArrayList<CountryItem>   = arrayListOf(),
+    @SerializedName("genres"                     ) var genreItems                 : ArrayList<GenreItem>     = arrayListOf(),
     @SerializedName("startYear"                  ) var startYear                  : Int?                 = null,
     @SerializedName("endYear"                    ) var endYear                    : Int?                 = null,
     @SerializedName("serial"                     ) var serial                     : Boolean?             = null,
