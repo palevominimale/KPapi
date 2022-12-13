@@ -1,4 +1,4 @@
-package com.junopark.kpapi.data.api
+package com.junopark.kpapi.domain.models
 
 sealed interface ApiResult {
     data class ApiSuccess(val data: Any) : ApiResult
