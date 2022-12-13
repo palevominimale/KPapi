@@ -1,18 +1,18 @@
 package com.junopark.kpapi.data.api
 
-import com.junopark.kpapi.data.models.films.FilmItemBig
-import com.junopark.kpapi.data.models.seasons.SeasonsResponse
-import com.junopark.kpapi.data.models.ListResponse
-import com.junopark.kpapi.data.models.awards.AwardsResponse
-import com.junopark.kpapi.data.models.boxoffice.BoxOfficeResponse
-import com.junopark.kpapi.data.models.distribution.DistributionResponse
-import com.junopark.kpapi.data.models.facts.FactsResponse
-import com.junopark.kpapi.data.models.films.FilmItemMini
-import com.junopark.kpapi.data.models.filter.FilterResponse
-import com.junopark.kpapi.data.models.filteredsearch.FilteredSearchResponse
-import com.junopark.kpapi.data.models.keywordsearch.KeywordSearchResponse
-import com.junopark.kpapi.data.models.releases.ReleasesResponse
-import com.junopark.kpapi.data.models.similar.SimilarResponse
+
+import com.junopark.kpapi.entities.awards.AwardsResponse
+import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
+import com.junopark.kpapi.entities.distribution.DistributionResponse
+import com.junopark.kpapi.entities.facts.FactsResponse
+import com.junopark.kpapi.entities.films.FilmItemBig
+import com.junopark.kpapi.entities.films.FilmItemMini
+import com.junopark.kpapi.entities.filter.FilterResponse
+import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
+import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
+import com.junopark.kpapi.entities.releases.ReleasesResponse
+import com.junopark.kpapi.entities.seasons.SeasonsResponse
+import com.junopark.kpapi.entities.similar.SimilarResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -24,7 +24,7 @@ interface ApiRequest {
     fun getTop(
         @Query("type") type: String = TOP_250,
         @Query("page") page: Int = 1,
-    ): Call<ListResponse>
+    ): Call<com.junopark.kpapi.entities.ListResponse>
 
     @GET("films/{id}")
     fun getById(@Path("id") id: Int) : Call<FilmItemBig>
