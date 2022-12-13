@@ -54,8 +54,37 @@ class ApiRepoImpl : ApiRepo {
         }
     }
 
-    override suspend fun getTop(type: String, page: Int) {
-        apiState.emit(handleApi { retrofit.getTop(type, page) })
-    }
+    override suspend fun getTop(type: String, page: Int) = apiState.emit(handleApi { retrofit.getTop(type, page) })
+    override suspend fun getById(id: Int) = apiState.emit(handleApi { retrofit.getById(id) })
+    override suspend fun getSeasons(id: Int) = apiState.emit(handleApi { retrofit.getSeasons(id) })
+    override suspend fun getFacts(id: Int) = apiState.emit(handleApi { retrofit.getFacts(id) })
+    override suspend fun getDistributions(id: Int) = apiState.emit(handleApi { retrofit.getDistributions(id) })
+    override suspend fun getBoxOffice(id: Int) = apiState.emit(handleApi { retrofit.getBoxOffice(id) })
+    override suspend fun getAwards(id: Int) = apiState.emit(handleApi { retrofit.getAwards(id) })
+    override suspend fun getSimilar(id: Int) = apiState.emit(handleApi { retrofit.getSimilar(id) })
+    override suspend fun getRelated(id: Int) = apiState.emit(handleApi { retrofit.getRelated(id) })
+    override suspend fun getFilters() = apiState.emit(handleApi { retrofit.getFilters() })
+    override suspend fun getByFilter(
+        countries: String,
+        genres: String,
+        order: String,
+        type: String,
+        ratingFrom: Int,
+        ratingTo: Int,
+        yearFrom: Int,
+        yearTo: Int,
+        imdbId: String,
+        keyword: String,
+        page: Int
+    ) = apiState.emit(handleApi {
+            retrofit.getByFilter(countries, genres, order, type, ratingFrom, ratingTo, yearFrom, yearTo, imdbId, keyword, page)
+        })
+
+    override suspend fun getByKeywordSearch(query: String, page: Int) =
+        apiState.emit(handleApi { retrofit.getByKeywordSearch(query, page) })
+
+    override suspend fun getReleases(year: Int, month: String, page: Int) =
+        apiState.emit(handleApi { retrofit.getReleases(year, month, page) })
+
 
 }
