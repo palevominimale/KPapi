@@ -2,6 +2,7 @@ package com.junopark.kpapi.app
 
 import android.app.Application
 import com.junopark.kpapi.app.di.dataDi
+import com.junopark.kpapi.app.di.domainDi
 import com.junopark.kpapi.app.di.uiDi
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -18,6 +19,7 @@ class App : Application() {
                 listOf(
                     uiDi,
                     dataDi,
+                    domainDi
                 )
             )
         }
