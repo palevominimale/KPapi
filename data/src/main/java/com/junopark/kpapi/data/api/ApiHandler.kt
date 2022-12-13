@@ -18,7 +18,7 @@ class ApiHandler() {
             val response = execute()
             val body = response.body()
             if(response.isSuccessful && body != null) {
-                ApiResult.ApiSuccess(data = body as List<Any>)
+                ApiResult.ApiSuccess(data = body)
             } else {
                 ApiResult.ApiError(code = response.code(), message = response.message())
             }
