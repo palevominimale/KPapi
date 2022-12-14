@@ -1,4 +1,4 @@
-package com.junopark.kpapi.data.api.database
+package com.junopark.kpapi.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -10,10 +10,10 @@ import com.junopark.kpapi.entities.films.FilmItemMini
 interface FavsFilmsDAO {
 
     @Query("SELECT * FROM filmItemMini")
-    suspend fun getFilms(): List<FilmItemMini>
+    suspend fun getFilms(): List<FilmItemMini>?
 
     @Query("SELECT * FROM FilmItemMini WHERE filmId=(:id)")
-    suspend fun getFilm(id: Int?): FilmItemMini
+    suspend fun getFilm(id: Int): FilmItemMini?
 
     @Insert
     suspend fun addFilm(filmItemMini: FilmItemMini)

@@ -9,7 +9,8 @@ val uiDi = module {
         MainViewModel(
             api = get(),
             get250 = get(),
-            test = get()
+            test = get(),
+            db = get()
         )
     }
 }

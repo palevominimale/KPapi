@@ -1,7 +1,8 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package com.junopark.kpapi.data.api
+package com.junopark.kpapi.data.repos
 
+import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
 import kotlinx.coroutines.flow.MutableStateFlow
