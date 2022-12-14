@@ -1,4 +1,4 @@
-package com.junopark.kpapi.data.api.database
+package com.junopark.kpapi.data.localstorage
 
 import androidx.room.Dao
 import androidx.room.Delete
