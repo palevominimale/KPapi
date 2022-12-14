@@ -16,6 +16,8 @@ import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "MVM"
@@ -25,17 +27,33 @@ class MainViewModel(
     private val get250: GetTop250FilmsUseCase,
     private val test: ApiTestUseCase
 ) : ViewModel() {
+
     private val scope = CoroutineScope(Dispatchers.IO)
+    private val _uiState = MutableStateFlow<UiState>(UiState.NoInternet)
+    val uiState : StateFlow<UiState> get() = _uiState
 
     init {
+        processApi()
+    }
+
+    private fun processApi() {
         viewModelScope.launch {
             api.state.collect {
                 when(it) {
                     is ApiResult.ApiSuccess -> {
                         when(it.data) {
-                            is ListResponse -> {Log.w(TAG, it.toString())}
-                            is FilmItemBig -> {Log.w(TAG, it.toString())}
-                            is SeasonsResponse -> {Log.w(TAG, it.toString())}
+                            is ListResponse -> {
+                                Log.w(TAG, it.toString())
+                                _uiState.emit(UiState.Ready.List(it.data))
+                            }
+                            is FilmItemBig -> {
+                                Log.w(TAG, it.toString())
+                                _uiState.emit(UiState.Ready.Single(it.data))
+                            }
+                            is SeasonsResponse -> {
+                                Log.w(TAG, it.toString())
+                                _uiState.emit(UiState.Ready.List(it.data))
+                            }
                             is SimilarResponse -> {Log.w(TAG, it.toString())}
                             is FactsResponse -> {Log.w(TAG, it.toString())}
                             is FilterResponse -> {Log.w(TAG, it.toString())}
@@ -47,15 +65,19 @@ class MainViewModel(
         }
     }
 
-    fun get250() {
-        scope.launch {
-            get250.invoke()
-        }
-    }
+    fun reduce(intent: UiIntent) {
+        when(intent) {
+            is UiIntent.Filter.Clear -> {}
+            is UiIntent.Filter.Set -> {}
 
-    fun testApi() {
-        scope.launch {
-            test.invoke()
+            is UiIntent.Show.Favorites -> {}
+            is UiIntent.Show.Shared -> {}
+            is UiIntent.Show.Top -> {}
+
+            is UiIntent.Search.ByFilter -> {}
+            is UiIntent.Search.ByKeyword -> {}
+            is UiIntent.Search.ByName -> {}
+            is UiIntent.Search.Relevant -> {}
         }
     }
 
