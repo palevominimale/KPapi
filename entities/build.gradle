@@ -38,6 +38,7 @@ dependencies {
 
     //RoomDB
     kapt "androidx.room:room-compiler:$room"
+    kapt "androidx.room:room-common:$room"
     annotationProcessor "androidx.room:room-compiler:$room"
     implementation "androidx.room:room-runtime:$room"
 }
