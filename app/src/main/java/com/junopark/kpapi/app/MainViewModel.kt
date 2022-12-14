@@ -12,6 +12,7 @@ import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.films.FilmItemMini
+import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.filter.FilterResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
@@ -27,12 +28,13 @@ class MainViewModel(
     private val api: ApiRepo,
     private val get250: GetTop250FilmsUseCase,
     private val test: ApiTestUseCase,
-    private val db:RoomUseCase
+    private val db: RoomUseCase
 ) : ViewModel() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _uiState = MutableStateFlow<UiState>(UiState.NoInternet)
     val uiState : StateFlow<UiState> get() = _uiState
+    private var filter: FilmFilter = FilmFilter()
 
     init {
         processApi()
@@ -56,30 +58,64 @@ class MainViewModel(
                                 Log.w(TAG, it.toString())
                                 _uiState.emit(UiState.Ready.List(it.data))
                             }
-                            is SimilarResponse -> {Log.w(TAG, it.toString())}
-                            is FactsResponse -> {Log.w(TAG, it.toString())}
-                            is FilterResponse -> {Log.w(TAG, it.toString())}
+                            is SimilarResponse -> {
+                                Log.w(TAG, it.toString())
+                                _uiState.emit(UiState.Ready.List(it.data))
+                            }
+                            is FactsResponse -> {
+                                Log.w(TAG, it.toString())
+                            }
+                            is FilterResponse -> {
+                                Log.w(TAG, it.toString())
+                            }
                         }
                     }
-                    else -> {}
+                    is ApiResult.ApiError -> {
+                        _uiState.emit(UiState.Error.HttpError(
+                            code = it.code ?: 0,
+                            message = it.message ?: "")
+                        )
+                    }
+                    is ApiResult.ApiException -> {
+                        _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                    }
                 }
             }
         }
     }
 
     fun reduce(intent: UiIntent) {
-        when(intent) {
-            is UiIntent.Filter.Clear -> {}
-            is UiIntent.Filter.Set -> {}
+        viewModelScope.launch {
+            when(intent) {
+                is UiIntent.Filter.Clear -> filter = FilmFilter()
+                is UiIntent.Filter.Set -> filter = intent.filter
 
-            is UiIntent.Show.Favorites -> {}
-            is UiIntent.Show.Shared -> {}
-            is UiIntent.Show.Top -> {}
+                is UiIntent.Show.Favorites -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+                is UiIntent.Show.Shared -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+                is UiIntent.Show.Top -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
 
-            is UiIntent.Search.ByFilter -> {}
-            is UiIntent.Search.ByKeyword -> {}
-            is UiIntent.Search.ByName -> {}
-            is UiIntent.Search.Relevant -> {}
+                is UiIntent.Search.ByFilter -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+                is UiIntent.Search.ByKeyword -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+                is UiIntent.Search.ByName -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+                is UiIntent.Search.Relevant -> {
+                    _uiState.emit(UiState.IsLoading)
+                }
+
+                is UiIntent.Favorites.Add -> db.addFilm(intent.item)
+                is UiIntent.Favorites.Remove -> db.removeFilm(intent.item)
+            }
         }
     }
 

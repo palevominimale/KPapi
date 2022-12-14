@@ -12,7 +12,7 @@ sealed interface UiState {
         data class Favorites(val data: FilmItemMini) : UiState
     }
     sealed interface Error {
-        data class HttpError(val code: Int, val message: String)
-        data class Exception(val e: Throwable)
+        data class HttpError(val code: Int, val message: String) : UiState
+        data class Exception(val e: Throwable) : UiState
     }
 }

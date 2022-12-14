@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app
 
+import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilmFilter
 
 sealed interface UiIntent {
@@ -17,5 +18,9 @@ sealed interface UiIntent {
     sealed interface Filter {
         object Clear : UiIntent
         data class Set(val filter: FilmFilter) : UiIntent
+    }
+    sealed interface Favorites {
+        data class Add(val item: FilmItemMini) : UiIntent
+        data class Remove(val item: FilmItemMini) : UiIntent
     }
 }
