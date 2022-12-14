@@ -7,6 +7,7 @@ import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
 import com.junopark.kpapi.domain.usecases.ApiTestUseCase
 import com.junopark.kpapi.domain.usecases.GetTop250FilmsUseCase
+import com.junopark.kpapi.domain.usecases.RoomUseCase
 import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
@@ -25,7 +26,8 @@ private const val TAG = "MVM"
 class MainViewModel(
     private val api: ApiRepo,
     private val get250: GetTop250FilmsUseCase,
-    private val test: ApiTestUseCase
+    private val test: ApiTestUseCase,
+    private val db:RoomUseCase
 ) : ViewModel() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -81,4 +83,27 @@ class MainViewModel(
         }
     }
 
+    fun getFilms() {
+        viewModelScope.launch{
+            db.getFilms()
+        }
+    }
+
+    fun getFilm(id: Int?) {
+        viewModelScope.launch{
+            db.getFilm(id)
+        }
+    }
+
+    fun addFilm(filmItemMini: FilmItemMini) {
+        viewModelScope.launch{
+            db.addFilm(filmItemMini)
+        }
+    }
+
+    fun removeFilm(filmItemMini: FilmItemMini) {
+        viewModelScope.launch{
+            db.removeFilm(filmItemMini)
+        }
+    }
 }
