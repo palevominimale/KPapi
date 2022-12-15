@@ -310,7 +310,7 @@ private fun DropdownList(
                     .onGloballyPositioned {
                         textFieldSize = it.size.toSize()
                     },
-                    readOnly = false,
+                    readOnly = true,
                     value = selectedText,
                     onValueChange = {
                         selectedText = it
