@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             KPapiTheme {
                 BottomSheetScaffold(
                     scaffoldState = scaffoldState,
-                    sheetPeekHeight = 50.dp,
+                    sheetPeekHeight = 72.dp,
                     sheetContent = { FilterPad() }
                 ) {
 
@@ -51,7 +51,7 @@ fun DefaultPreview() {
         val scope = rememberCoroutineScope()
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
-            sheetPeekHeight = 56.dp,
+            sheetPeekHeight = 72.dp,
             sheetContent = { FilterPad(
                 switchFilter = {
                     scope.launch {
