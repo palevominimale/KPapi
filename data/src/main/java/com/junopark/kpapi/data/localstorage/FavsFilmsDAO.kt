@@ -18,6 +18,6 @@ interface FavsFilmsDAO {
     @Insert
     suspend fun addFilm(filmItemMini: FilmItemMini)
 
-    @Delete
-    suspend fun removeFilm(filmItemMini: FilmItemMini)
+    @Query("SELECT * FROM FilmItemMini WHERE filmId=(:id)")
+    suspend fun removeFilm(id: Int)
 }
