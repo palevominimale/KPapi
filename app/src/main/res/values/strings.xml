@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KPapi</string>
+    <string name="search_text">Поиск</string>
 </resources>
