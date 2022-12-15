@@ -57,17 +57,34 @@ interface ApiRequest {
 
     @GET("v2.2/films?")
     fun getByFilter(
-        @Query("countries") countries : String = "",
-        @Query("genres") genres : String = "",
-        @Query("order") order : String = DEFAULT_ORDER,
-        @Query("type") type : String = DEFAULT_TYPE,
-        @Query("ratingFrom") ratingFrom : Int = 5,
-        @Query("ratingTo") ratingTo : Int = 10,
-        @Query("yearFrom") yearFrom : Int = 1990,
-        @Query("yearTo") yearTo : Int = 2022,
-        @Query("imdbId") imdbId : String = "",
-        @Query("keyword") keyword : String = "",
-        @Query("page") page : Int = 1,
+        @Query("countries") countries : String? = null,
+        @Query("genres") genres : String? = null,
+        @Query("order") order : String? = null,
+        @Query("type") type : String? = null,
+        @Query("ratingFrom") ratingFrom : Int? = 0,
+        @Query("ratingTo") ratingTo : Int? = 10,
+        @Query("yearFrom") yearFrom : Int? = 1000,
+        @Query("yearTo") yearTo : Int? = 3000,
+        @Query("imdbId") imdbId : String? = null,
+        @Query("keyword") keyword : String? = null,
+        @Query("page") page : Int? = 1,
+    ) : Call<FilteredSearchResponse>
+
+    @GET("v2.2/films?")
+    fun getByImdbId(
+        @Query("imdbId") imdbId : String? = null,
+        @Query("page") page : Int? = 1,
+    ) : Call<FilteredSearchResponse>
+
+    @GET("v2.2/films?")
+    fun getByFilter(
+        @Query("order") order : String? = null,
+        @Query("type") type : String? = null,
+        @Query("ratingFrom") ratingFrom : Int? = 0,
+        @Query("ratingTo") ratingTo : Int? = 10,
+        @Query("yearFrom") yearFrom : Int? = 1000,
+        @Query("yearTo") yearTo : Int? = 3000,
+        @Query("page") page : Int? = 1,
     ) : Call<FilteredSearchResponse>
 
     @GET("v2.1/films/search-by-keyword?")
@@ -97,7 +114,5 @@ interface ApiRequest {
     companion object {
         const val BASE_URL = """https://kinopoiskapiunofficial.tech/api/"""
         const val TOP_250 = "TOP_250_BEST_FILMS"
-        const val DEFAULT_ORDER = "RATING"
-        const val DEFAULT_TYPE = "FILM"
     }
 }

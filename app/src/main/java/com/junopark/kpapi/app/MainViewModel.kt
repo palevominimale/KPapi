@@ -11,7 +11,6 @@ import com.junopark.kpapi.domain.usecases.RoomUseCase
 import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
-import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.filter.FilterResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
@@ -135,30 +134,51 @@ class MainViewModel(
 
                 is UiIntent.Search.ByFilter -> {
                     _uiState.emit(UiState.IsLoading)
-                    api.getByFilter(
-                        countries = filter.countries,
-                        genres =  filter.genres,
-                        order = filter.order,
-                        type = filter.type,
-                        ratingFrom = filter.ratingFrom,
-                        ratingTo = filter.ratingTo,
-                        yearFrom = filter.yearFrom,
-                        yearTo = filter.yearTo,
-                        imdbId = filter.imdbId,
-                        keyword = filter.keyword,
-                    )
+                    if(filter.genres == null) {
+                        api.getByFilter(
+                            order = filter.order,
+                            type = filter.type,
+                            ratingFrom = filter.ratingFrom,
+                            ratingTo = filter.ratingTo,
+                            yearFrom = filter.yearFrom,
+                            yearTo = filter.yearTo,
+                        )
+                    } else {
+                        api.getByFilter(
+                            countries = filter.countries,
+                            genres =  filter.genres,
+                            order = filter.order,
+                            type = filter.type,
+                            ratingFrom = filter.ratingFrom,
+                            ratingTo = filter.ratingTo,
+                            yearFrom = filter.yearFrom,
+                            yearTo = filter.yearTo,
+                            imdbId = filter.imdbId,
+                            keyword = filter.keyword,
+                        )
+                    }
+
                 }
                 is UiIntent.Search.ByKeyword -> {
                     _uiState.emit(UiState.IsLoading)
-                    api.getByKeywordSearch(
-                        query = filter.keyword
-                    )
+                    if(filter.keyword != null) {
+                        api.getByKeywordSearch(
+                            query = filter.keyword!!
+                        )
+                    } else {
+                        _uiState.emit(UiState.Ready.Empty)
+                    }
+
                 }
                 is UiIntent.Search.ByName -> {
                     _uiState.emit(UiState.IsLoading)
-                    api.getByKeywordSearch(
-                        query = filter.keyword
-                    )
+                    if(filter.keyword != null) {
+                        api.getByKeywordSearch(
+                            query = filter.keyword!!
+                        )
+                    } else {
+                        _uiState.emit(UiState.Ready.Empty)
+                    }
                 }
                 is UiIntent.Search.Relevant -> {
                     _uiState.emit(UiState.IsLoading)

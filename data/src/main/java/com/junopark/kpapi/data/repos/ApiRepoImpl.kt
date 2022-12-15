@@ -62,19 +62,30 @@ class ApiRepoImpl : ApiRepo {
     override suspend fun getRelated(id: Int) = apiState.emit(handleApi { retrofit.getRelated(id) })
     override suspend fun getFilters() = apiState.emit(handleApi { retrofit.getFilters() })
     override suspend fun getByFilter(
-        countries: String,
-        genres: String,
-        order: String,
-        type: String,
-        ratingFrom: Int,
-        ratingTo: Int,
-        yearFrom: Int,
-        yearTo: Int,
-        imdbId: String,
-        keyword: String,
-        page: Int
+        countries: String?,
+        genres: String?,
+        order: String?,
+        type: String?,
+        ratingFrom: Int?,
+        ratingTo: Int?,
+        yearFrom: Int?,
+        yearTo: Int?,
+        imdbId: String?,
+        keyword: String?,
+        page: Int?
     ) = apiState.emit(handleApi {
             retrofit.getByFilter(countries, genres, order, type, ratingFrom, ratingTo, yearFrom, yearTo, imdbId, keyword, page)
+        })
+    override suspend fun getByFilter(
+        order: String?,
+        type: String?,
+        ratingFrom: Int?,
+        ratingTo: Int?,
+        yearFrom: Int?,
+        yearTo: Int?,
+        page: Int?
+    ) = apiState.emit(handleApi {
+            retrofit.getByFilter(order, type, ratingFrom, ratingTo, yearFrom, yearTo, page)
         })
 
     override suspend fun getByKeywordSearch(query: String, page: Int) =

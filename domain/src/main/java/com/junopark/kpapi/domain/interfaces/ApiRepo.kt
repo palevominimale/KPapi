@@ -30,17 +30,26 @@ interface ApiRepo {
     suspend fun getRelated(id: Int = DEFAULT_ID)
     suspend fun getFilters()
     suspend fun getByFilter(
-        countries : String = "",
-        genres : String = "",
-        order : String = DEFAULT_ORDER,
-        type : String = DEFAULT_TYPE,
-        ratingFrom : Int = 5,
-        ratingTo : Int = 10,
-        yearFrom : Int = 1990,
-        yearTo : Int = 2022,
-        imdbId : String = "",
-        keyword : String = "",
-        page : Int = 1,
+        countries : String? = null,
+        genres : String? = null,
+        order : String? = null,
+        type : String? = null,
+        ratingFrom : Int? = 0,
+        ratingTo : Int? = 10,
+        yearFrom : Int? = 1000,
+        yearTo : Int? = 3000,
+        imdbId : String? = null,
+        keyword : String? = null,
+        page : Int? = 1,
+    )
+    suspend fun getByFilter(
+        order : String? = null,
+        type : String? = null,
+        ratingFrom : Int? = 0,
+        ratingTo : Int? = 10,
+        yearFrom : Int? = 1000,
+        yearTo : Int? = 3000,
+        page : Int? = 1,
     )
     suspend fun getByKeywordSearch(
         query : String = "",
