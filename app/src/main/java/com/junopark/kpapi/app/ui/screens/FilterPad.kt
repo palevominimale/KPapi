@@ -73,6 +73,7 @@ fun FilterPad(
                 searchUpdate = {
                     newFilter = newFilter.copy(keyword = it)
                     updateFilter(newFilter)
+                    searchByString(it)
                 }
             )
             Column(
