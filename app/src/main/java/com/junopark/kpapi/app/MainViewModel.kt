@@ -18,11 +18,14 @@ import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.filter.FilterResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
+import com.junopark.kpapi.entities.top.TopResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.core.component.getScopeId
 
 private const val TAG = "MVM"
 
@@ -70,6 +73,13 @@ class MainViewModel(
                             is FilterResponse -> {
                                 Log.w(TAG, it.toString())
                             }
+                            is TopResponse -> {
+                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                Log.w(TAG, it.toString())
+                            }
+                            else -> {
+                                Log.w(TAG, "unexpected data: ${it.toString()}")
+                            }
                         }
                     }
                     is ApiResult.ApiError -> {
@@ -88,7 +98,7 @@ class MainViewModel(
     }
 
     fun reduce(intent: UiIntent) {
-        viewModelScope.launch {
+        scope.launch {
             when(intent) {
                 is UiIntent.Filter.Clear -> filter = FilmFilter()
                 is UiIntent.Filter.Set -> filter = intent.filter
