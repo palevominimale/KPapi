@@ -10,6 +10,6 @@ class RoomUseCase(
     suspend fun getFilms() = favsFilms.getFilms()
     suspend fun getFilm(id:Int) = favsFilms.getFilm(id)
     suspend fun addFilm(filmItemMini:FilmItemMini) = favsFilms.addFilm(filmItemMini)
-    suspend fun removeFilm(id: Int) = favsFilms.RemoveFilm(id)
+    suspend fun removeFilm(id: Int) = favsFilms.removeFilm(id)
 
 }

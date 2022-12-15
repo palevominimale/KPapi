@@ -67,7 +67,7 @@ fun FilterPad(
                 shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
             )
     ) {
-        Column() {
+        Column {
             SearchBar(
                 switchFilter = { switchFilter() },
                 searchUpdate = {
@@ -292,7 +292,7 @@ private fun DropdownList(
         if (expanded) Icons.Filled.KeyboardArrowUp
         else Icons.Filled.KeyboardArrowDown
 
-    Column() {
+    Column {
         Text(
             text = label,
             style = Typography.labelMedium,

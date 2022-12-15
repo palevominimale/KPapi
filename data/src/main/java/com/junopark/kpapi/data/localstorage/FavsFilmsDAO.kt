@@ -1,7 +1,6 @@
 package com.junopark.kpapi.data.localstorage
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.junopark.kpapi.entities.films.FilmItemMini
@@ -13,7 +12,7 @@ interface FavsFilmsDAO {
     suspend fun getFilms(): List<FilmItemMini>
 
     @Query("SELECT * FROM FilmItemMini WHERE filmId=(:id)")
-    suspend fun getFilm(id: Int?): FilmItemMini
+    suspend fun getFilm(id: Int?): FilmItemMini?
 
     @Insert
     suspend fun addFilm(filmItemMini: FilmItemMini)

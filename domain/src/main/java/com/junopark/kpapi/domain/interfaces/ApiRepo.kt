@@ -1,18 +1,6 @@
 package com.junopark.kpapi.domain.interfaces
 
 import com.junopark.kpapi.domain.models.ApiResult
-import com.junopark.kpapi.entities.awards.AwardsResponse
-import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
-import com.junopark.kpapi.entities.distribution.DistributionResponse
-import com.junopark.kpapi.entities.facts.FactsResponse
-import com.junopark.kpapi.entities.films.FilmItemBig
-import com.junopark.kpapi.entities.films.FilmItemMini
-import com.junopark.kpapi.entities.filter.FilterResponse
-import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
-import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
-import com.junopark.kpapi.entities.releases.ReleasesResponse
-import com.junopark.kpapi.entities.seasons.SeasonsResponse
-import com.junopark.kpapi.entities.similar.SimilarResponse
 import kotlinx.coroutines.flow.StateFlow
 
 interface ApiRepo {
@@ -62,8 +50,6 @@ interface ApiRepo {
     )
 
     companion object {
-        const val DEFAULT_ORDER = "RATING"
-        const val DEFAULT_TYPE = "FILM"
         const val DEFAULT_ID = 301
         const val TOP_250 = "TOP_250_BEST_FILMS"
     }

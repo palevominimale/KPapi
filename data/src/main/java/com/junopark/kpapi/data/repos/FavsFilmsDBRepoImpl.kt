@@ -26,7 +26,7 @@ class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
     override suspend fun getFilms() {
         roomState.emit(try {
             val result = filmsDAO.getFilms()
-            if(result != null) RoomResult.Success(result) else RoomResult.Empty
+            if(result.isNotEmpty()) RoomResult.Success(result) else RoomResult.Empty
         } catch (e:Throwable){
             RoomResult.Error(e)
         })
@@ -43,17 +43,17 @@ class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
 
     override suspend fun addFilm(filmItemMini: FilmItemMini) {
         roomState.emit(try {
-            val result = filmsDAO.addFilm(filmItemMini) as FilmItemMini
-            if(result != null) RoomResult.Success(result) else RoomResult.Empty
+            filmsDAO.addFilm(filmItemMini)
+            RoomResult.Success(true)
         } catch (e:Throwable){
             RoomResult.Error(e)
         })
     }
 
-    override suspend fun RemoveFilm(id: Int) {
+    override suspend fun removeFilm(id: Int) {
         roomState.emit(try {
-            val result = filmsDAO.removeFilm(id) as FilmItemMini
-            if(result != null) RoomResult.Success(result) else RoomResult.Empty
+            filmsDAO.removeFilm(id)
+            RoomResult.Success(true)
         } catch (e:Throwable){
             RoomResult.Error(e)
         })
