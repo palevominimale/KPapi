@@ -19,7 +19,6 @@ class ApiRepoImpl : ApiRepo {
 
     private val apiState = MutableStateFlow<ApiResult>(ApiResult.ApiSuccess(false))
     override val state : StateFlow<ApiResult> get() = apiState
-
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor {
             val request = it.request().newBuilder()
@@ -39,9 +38,7 @@ class ApiRepoImpl : ApiRepo {
             .create(ApiRequest::class.java)
     }
 
-    private suspend fun <T> handleApi(
-        execute: () -> Call<T>
-    ) : ApiResult {
+    private suspend fun <T> handleApi(execute: () -> Call<T>) : ApiResult {
         return try {
             val response = execute.invoke().execute()
             val body = response.body()

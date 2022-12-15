@@ -7,8 +7,6 @@ import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
-import com.junopark.kpapi.domain.usecases.ApiTestUseCase
-import com.junopark.kpapi.domain.usecases.GetTop250FilmsUseCase
 import com.junopark.kpapi.domain.usecases.RoomUseCase
 import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
@@ -23,9 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.core.component.getScopeId
 
 private const val TAG = "MVM"
 
