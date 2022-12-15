@@ -70,7 +70,10 @@ fun FilterPad(
         Column() {
             SearchBar(
                 switchFilter = { switchFilter() },
-                searchUpdate = { }
+                searchUpdate = {
+                    newFilter = newFilter.copy(keyword = it)
+                    updateFilter(newFilter)
+                }
             )
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -80,6 +83,13 @@ fun FilterPad(
                     style = Typography.labelMedium,
                     modifier = modifier.padding(bottom = 4.dp)
                 )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = range.start.toInt().toString())
+                    Text(text = range.endInclusive.toInt().toString())
+                }
                 RangeSlider(
                     value = range,
                     onValueChange = {
