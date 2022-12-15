@@ -7,8 +7,6 @@ import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
-import com.junopark.kpapi.domain.usecases.ApiTestUseCase
-import com.junopark.kpapi.domain.usecases.GetTop250FilmsUseCase
 import com.junopark.kpapi.domain.usecases.RoomUseCase
 import com.junopark.kpapi.entities.ListResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
@@ -23,16 +21,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.core.component.getScopeId
 
 private const val TAG = "MVM"
 
 class MainViewModel(
     private val api: ApiRepo,
-    private val get250: GetTop250FilmsUseCase,
-    private val test: ApiTestUseCase,
     private val db: RoomUseCase
 ) : ViewModel() {
 
@@ -53,7 +47,12 @@ class MainViewModel(
                         when(it.data) {
                             is ListResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as ListResponse).filmItemBigs.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
+
                             }
                             is FilmItemBig -> {
                                 Log.w(TAG, it.toString())
@@ -61,28 +60,46 @@ class MainViewModel(
                             }
                             is SeasonsResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as SeasonsResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             is SimilarResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as SimilarResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             is FactsResponse -> {
                                 Log.w(TAG, it.toString())
+                                if((it.data as FactsResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+
+                                }
                             }
                             is FilterResponse -> {
                                 Log.w(TAG, it.toString())
                             }
                             is TopResponse -> {
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
                                 Log.w(TAG, it.toString())
+                                if((it.data as TopResponse).films.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             else -> {
-                                Log.w(TAG, "unexpected data: ${it.toString()}")
+                                Log.w(TAG, "unexpected data: $it")
                             }
                         }
                     }
                     is ApiResult.ApiError -> {
+                        Log.w(TAG, "error: $it")
                         _uiState.emit(
                             UiState.Error.HttpError(
                             code = it.code ?: 0,
@@ -90,6 +107,7 @@ class MainViewModel(
                         )
                     }
                     is ApiResult.ApiException -> {
+                        Log.w(TAG, "exception: $it")
                         _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
                     }
                 }
@@ -148,32 +166,8 @@ class MainViewModel(
                 }
 
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)
-                is UiIntent.Favorites.Remove -> db.removeFilm(intent.item)
+                is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
             }
-        }
-    }
-
-    fun getFilms() {
-        viewModelScope.launch{
-            db.getFilms()
-        }
-    }
-
-    fun getFilm(id: Int) {
-        viewModelScope.launch{
-            db.getFilm(id)
-        }
-    }
-
-    fun addFilm(filmItemMini: FilmItemMini) {
-        viewModelScope.launch{
-            db.addFilm(filmItemMini)
-        }
-    }
-
-    fun removeFilm(filmItemMini: FilmItemMini) {
-        viewModelScope.launch{
-            db.removeFilm(filmItemMini)
         }
     }
 }

@@ -21,6 +21,6 @@ sealed interface UiIntent {
     }
     sealed interface Favorites {
         data class Add(val item: FilmItemMini) : UiIntent
-        data class Remove(val item: FilmItemMini) : UiIntent
+        data class Remove(val id: Int) : UiIntent
     }
 }

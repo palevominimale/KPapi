@@ -50,9 +50,9 @@ class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
         })
     }
 
-    override suspend fun RemoveFilm(filmItemMini: FilmItemMini) {
+    override suspend fun RemoveFilm(id: Int) {
         roomState.emit(try {
-            val result = filmsDAO.removeFilm(filmItemMini) as FilmItemMini
+            val result = filmsDAO.removeFilm(id) as FilmItemMini
             if(result != null) RoomResult.Success(result) else RoomResult.Empty
         } catch (e:Throwable){
             RoomResult.Error(e)

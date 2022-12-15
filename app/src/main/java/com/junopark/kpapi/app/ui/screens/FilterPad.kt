@@ -73,6 +73,7 @@ fun FilterPad(
                 searchUpdate = {
                     newFilter = newFilter.copy(keyword = it)
                     updateFilter(newFilter)
+                    searchByString(it)
                 }
             )
             Column(
@@ -100,7 +101,7 @@ fun FilterPad(
                         )
                         updateFilter(newFilter)
                     },
-                    steps = 11,
+                    steps = 9,
                     valueRange = 0f..10f
                 )
                 DropdownList(
