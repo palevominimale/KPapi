@@ -50,19 +50,19 @@ class MainViewModel(
                         when(it.data) {
                             is ListResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data))
+                                _uiState.emit(UiState.Ready.List(it.data, filter))
                             }
                             is FilmItemBig -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.Single(it.data))
+                                _uiState.emit(UiState.Ready.Single(it.data, filter))
                             }
                             is SeasonsResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data))
+                                _uiState.emit(UiState.Ready.List(it.data, filter))
                             }
                             is SimilarResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data))
+                                _uiState.emit(UiState.Ready.List(it.data, filter))
                             }
                             is FactsResponse -> {
                                 Log.w(TAG, it.toString())
@@ -95,25 +95,46 @@ class MainViewModel(
 
                 is UiIntent.Show.Favorites -> {
                     _uiState.emit(UiState.IsLoading)
+                    _uiState.emit(UiState.Ready.List(db.getFilms()))
                 }
                 is UiIntent.Show.Shared -> {
                     _uiState.emit(UiState.IsLoading)
                 }
                 is UiIntent.Show.Top -> {
                     _uiState.emit(UiState.IsLoading)
+                    api.getTop()
                 }
 
                 is UiIntent.Search.ByFilter -> {
                     _uiState.emit(UiState.IsLoading)
+                    api.getByFilter(
+                        countries = filter.countries,
+                        genres =  filter.genres,
+                        order = filter.order,
+                        type = filter.type,
+                        ratingFrom = filter.ratingFrom,
+                        ratingTo = filter.ratingTo,
+                        yearFrom = filter.yearFrom,
+                        yearTo = filter.yearTo,
+                        imdbId = filter.imdbId,
+                        keyword = filter.keyword,
+                    )
                 }
                 is UiIntent.Search.ByKeyword -> {
                     _uiState.emit(UiState.IsLoading)
+                    api.getByKeywordSearch(
+                        query = filter.keyword
+                    )
                 }
                 is UiIntent.Search.ByName -> {
                     _uiState.emit(UiState.IsLoading)
+                    api.getByKeywordSearch(
+                        query = filter.keyword
+                    )
                 }
                 is UiIntent.Search.Relevant -> {
                     _uiState.emit(UiState.IsLoading)
+                    api.getSimilar(intent.id)
                 }
 
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)

@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        vm.reduce(UiIntent.Show.Top)
         setContent {
             val state = vm.uiState.collectAsState()
             KPapiTheme {
