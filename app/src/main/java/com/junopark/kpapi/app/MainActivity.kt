@@ -5,17 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
-import com.junopark.kpapi.app.ui.screens.TopBar
-import com.junopark.kpapi.app.ui.screens.FilterPad
-import com.junopark.kpapi.app.ui.screens.SplashScreen
+import com.junopark.kpapi.app.ui.screens.*
 import com.junopark.kpapi.app.ui.theme.KPapiTheme
+import com.junopark.kpapi.entities.filter.FilmFilter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -33,6 +30,7 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberBottomSheetScaffoldState(
                     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
                 )
+                var filter by remember { mutableStateOf(FilmFilter()) }
                 val scope = rememberCoroutineScope()
                 if(state.value == UiState.Splash) {
                     SplashScreen()
@@ -58,15 +56,30 @@ class MainActivity : ComponentActivity() {
                     ) {
                         when(state.value) {
                             is UiState.IsLoading -> {}
-                            is UiState.Error.NoInternet -> {}
-                            is UiState.Ready.Empty -> {}
-
-                            is UiState.Ready.Favorites -> {}
-                            is UiState.Ready.List -> {
+                            is UiState.Error.NoInternet -> { NoInternetScreen() }
+                            is UiState.Ready.Empty -> {
+                                ErrorScreen(e = Throwable(message = "Ничего не найдено"))
                             }
-                            is UiState.Ready.Single -> {}
-                            is UiState.Error.HttpError -> {}
-                            is UiState.Error.Exception -> {}
+
+                            is UiState.Ready.Favorites -> {
+                                filter = (state.value as UiState.Ready.Favorites).filter
+                            }
+                            is UiState.Ready.List -> {
+                                filter = (state.value as UiState.Ready.List).filter
+                            }
+                            is UiState.Ready.Single -> {
+                                filter = (state.value as UiState.Ready.Single).filter
+                            }
+
+                            is UiState.Error.HttpError -> {
+                                ErrorScreen(
+                                    code = (state.value as UiState.Error.HttpError).code,
+                                    message = (state.value as UiState.Error.HttpError).message
+                                )
+                            }
+                            is UiState.Error.Exception -> {
+                                ErrorScreen(e = (state.value as UiState.Error.Exception).e)
+                            }
 
                             else -> {}
                         }

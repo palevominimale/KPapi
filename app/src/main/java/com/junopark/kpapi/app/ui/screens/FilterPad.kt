@@ -100,7 +100,7 @@ fun FilterPad(
                         )
                         updateFilter(newFilter)
                     },
-                    steps = 11,
+                    steps = 9,
                     valueRange = 0f..10f
                 )
                 DropdownList(
