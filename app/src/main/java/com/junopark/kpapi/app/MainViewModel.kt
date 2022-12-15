@@ -147,33 +147,13 @@ class MainViewModel(
                     api.getSimilar(intent.id)
                 }
 
+                is UiIntent.Favorites.GetFilms -> db.getFilms()
+                is UiIntent.Favorites.GetFilm -> db.getFilm(intent.id)
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)
-                is UiIntent.Favorites.Remove -> db.removeFilm(intent.item)
+                is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
             }
         }
     }
 
-    fun getFilms() {
-        viewModelScope.launch{
-            db.getFilms()
-        }
-    }
 
-    fun getFilm(id: Int) {
-        viewModelScope.launch{
-            db.getFilm(id)
-        }
-    }
-
-    fun addFilm(filmItemMini: FilmItemMini) {
-        viewModelScope.launch{
-            db.addFilm(filmItemMini)
-        }
-    }
-
-    fun removeFilm(filmItemMini: FilmItemMini) {
-        viewModelScope.launch{
-            db.removeFilm(filmItemMini)
-        }
-    }
 }
