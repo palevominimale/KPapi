@@ -1,4 +1,4 @@
-package com.junopark.kpapi.app
+package com.junopark.kpapi.app.states
 
 import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilmFilter

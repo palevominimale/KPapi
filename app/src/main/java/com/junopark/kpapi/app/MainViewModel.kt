@@ -3,6 +3,8 @@ package com.junopark.kpapi.app
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.junopark.kpapi.app.states.UiIntent
+import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
 import com.junopark.kpapi.domain.usecases.ApiTestUseCase
@@ -71,7 +73,8 @@ class MainViewModel(
                         }
                     }
                     is ApiResult.ApiError -> {
-                        _uiState.emit(UiState.Error.HttpError(
+                        _uiState.emit(
+                            UiState.Error.HttpError(
                             code = it.code ?: 0,
                             message = it.message ?: "")
                         )

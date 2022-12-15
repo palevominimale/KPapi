@@ -1,4 +1,4 @@
-package com.junopark.kpapi.app.ui.screens.bottomsheet
+package com.junopark.kpapi.app.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,12 +38,16 @@ import androidx.compose.ui.unit.toSize
 import com.junopark.kpapi.app.R
 import com.junopark.kpapi.app.ui.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun FilterPad(
     modifier: Modifier = Modifier,
+    genres: List<String> = listOf("1","2","3","4"),
+    countries: List<String> = listOf("1","2","3","4"),
     switchFilter: () -> Unit = {}
 ) {
+    var range by remember { mutableStateOf(0f..10f) }
     Surface(
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         color = Color.White,
@@ -60,15 +65,37 @@ fun FilterPad(
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             ) {
+                Text(
+                    text = stringResource(id = R.string.search_rating),
+                    style = Typography.labelMedium,
+                    modifier = modifier.padding(bottom = 4.dp)
+                )
+                RangeSlider(
+                    value = range,
+                    onValueChange = { range = it},
+                    steps = 10,
+                )
                 DropdownList(
-                    items = listOf("1","2","3","4"),
+                    items = genres,
                     label = stringResource(id = R.string.search_genres),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 DropdownList(
-                    items = listOf("1","2","3","4"),
-                    label = stringResource(id = R.string.search_countries)
+                    items = countries,
+                    label = stringResource(id = R.string.search_countries),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
+                DropdownList(
+                    items = stringArrayResource(id = R.array.search_sort_types).toList(),
+                    label = stringResource(id = R.string.search_sort_label),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                DropdownList(
+                    items = stringArrayResource(id = R.array.search_film_types).toList(),
+                    label = stringResource(id = R.string.search_type_label),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
             }
         }
     }
@@ -203,7 +230,7 @@ private fun DropdownList(
         Text(
             text = label,
             style = Typography.labelMedium,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = modifier.padding(bottom = 4.dp)
         )
         Surface(
             shape = RoundedCornerShape(10.dp),

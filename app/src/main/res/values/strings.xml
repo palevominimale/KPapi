@@ -3,4 +3,33 @@
     <string name="search_text">Поиск</string>
     <string name="search_genres">Жанры</string>
     <string name="search_countries">Страны</string>
+    <string name="search_sort_label">Сортировка</string>
+    <string name="search_type_label">Тип фильма</string>
+    <string name="search_rating">Рейтинг</string>
+    <array name="search_sort_types">
+<!--        RATING, NUM_VOTE, YEAR-->
+        <item>Рейтинг</item>
+        <item>Голоса</item>
+        <item>Год</item>
+    </array>
+    <array name="search_film_types">
+<!--        FILM, TV_SHOW, TV_SERIES, MINI_SERIES, ALL-->
+        <item>Фильм</item>
+        <item>ТВ-шоу</item>
+        <item>ТВ-сериал</item>
+        <item>Мини-сериал</item>
+        <item>Все</item>
+    </array>
+    <array name="search_rating">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </array>
 </resources>
