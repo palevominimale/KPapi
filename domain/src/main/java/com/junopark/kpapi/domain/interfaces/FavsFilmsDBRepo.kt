@@ -15,5 +15,5 @@ interface FavsFilmsDBRepo {
 
     suspend fun addFilm(filmItemMini: FilmItemMini)
 
-    suspend fun RemoveFilm(filmItemMini: FilmItemMini)
+    suspend fun RemoveFilm(id: Int)
 }

@@ -165,7 +165,7 @@ class MainViewModel(
                 }
 
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)
-                is UiIntent.Favorites.Remove -> db.removeFilm(intent.item)
+                is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
             }
         }
     }
@@ -188,9 +188,9 @@ class MainViewModel(
         }
     }
 
-    fun removeFilm(filmItemMini: FilmItemMini) {
+    fun removeFilm(id: Int) {
         viewModelScope.launch{
-            db.removeFilm(filmItemMini)
+            db.removeFilm(id)
         }
     }
 }
