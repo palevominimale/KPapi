@@ -50,17 +50,17 @@ fun ErrorScreen(
                         modifier = Modifier
                             .size(150.dp)
                     )
-                    if(message != null) {
-                        Text(text = "Ошибка: $message")
-                    }
-                    if(code != null) {
-                        Text(text = "Код: $code")
-                    }
-                    if(e != null) {
-                        Text(text = "Фатальная ошибка: ${e.message}")
-                        Text(text = "Stack trace: ${e.stackTraceToString()}")
-                    }
                 }
+            }
+            if(message != null) {
+                Text(text = "Ошибка: $message")
+            }
+            if(code != null) {
+                Text(text = "Код: $code")
+            }
+            if(e != null) {
+                Text(text = "Фатальная ошибка: ${e.message}")
+                Text(text = "Stack trace: ${e.stackTraceToString()}")
             }
         }
     }
