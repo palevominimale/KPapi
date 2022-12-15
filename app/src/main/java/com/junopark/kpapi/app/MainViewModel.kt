@@ -89,7 +89,7 @@ class MainViewModel(
         }
     }
 
-    fun getFilm(id: Int?) {
+    fun getFilm(id: Int) {
         viewModelScope.launch{
             db.getFilm(id)
         }

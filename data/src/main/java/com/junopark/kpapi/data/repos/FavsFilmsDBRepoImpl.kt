@@ -32,7 +32,7 @@ class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
         })
     }
 
-    override suspend fun getFilm(id: Int?) {
+    override suspend fun getFilm(id: Int) {
         roomState.emit(try {
             val result = filmsDAO.getFilm(id)
             if(result != null) RoomResult.Success(result) else RoomResult.Empty

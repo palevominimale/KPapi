@@ -11,7 +11,7 @@ interface FavsFilmsDBRepo {
 
     suspend fun getFilms()
 
-    suspend fun getFilm(id: Int?)
+    suspend fun getFilm(id: Int)
 
     suspend fun addFilm(filmItemMini: FilmItemMini)
 
