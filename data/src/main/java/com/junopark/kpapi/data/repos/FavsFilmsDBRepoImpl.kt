@@ -2,7 +2,7 @@ package com.junopark.kpapi.data.repos
 
 import android.content.Context
 import androidx.room.Room
-import com.junopark.kpapi.data.database.FavsFilmsDB
+import com.junopark.kpapi.data.localstorage.FavsFilmsDB
 import com.junopark.kpapi.domain.interfaces.FavsFilmsDBRepo
 import com.junopark.kpapi.domain.models.RoomResult
 import com.junopark.kpapi.entities.films.FilmItemMini
