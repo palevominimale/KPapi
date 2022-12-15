@@ -165,6 +165,8 @@ class MainViewModel(
                     api.getSimilar(intent.id)
                 }
 
+                is UiIntent.Favorites.GetFilms -> db.getFilms()
+                is UiIntent.Favorites.GetFilm -> db.getFilm(intent.id)
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)
                 is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
             }
