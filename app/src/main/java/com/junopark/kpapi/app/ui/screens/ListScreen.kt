@@ -6,12 +6,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -27,16 +25,15 @@ import com.google.accompanist.placeholder.PlaceholderDefaults
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
-import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.app.R
 import com.junopark.kpapi.app.ui.theme.Typography
-import com.junopark.kpapi.entities.keywordsearch.FilmItemFromSearch
+import com.junopark.kpapi.entities.films.FilmItemBig
 
 @Composable
 @Preview
 fun ListScreen(
     modifier: Modifier = Modifier,
-    items: List<FilmItemFromSearch> = listOf(FilmItemFromSearch(),FilmItemFromSearch(),FilmItemFromSearch(),FilmItemFromSearch(),FilmItemFromSearch(),),
+    items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
     onSelect: (Int) -> Unit = {}
 ) {
 
@@ -61,7 +58,7 @@ fun ListScreen(
 
 @Composable
 fun FilmItem(
-    item: FilmItemFromSearch,
+    item: FilmItemBig,
     highlight: PlaceholderHighlight
 ) {
 
@@ -120,7 +117,7 @@ fun FilmItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = item.genres.joinToString(", "),
+                    text = item.genreItems.joinToString(", "),
                     style = Typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

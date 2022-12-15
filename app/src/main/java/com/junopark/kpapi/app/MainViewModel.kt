@@ -13,6 +13,8 @@ import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.filter.FilterResponse
+import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
+import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
 import com.junopark.kpapi.entities.top.TopResponse
@@ -49,9 +51,21 @@ class MainViewModel(
                                 if((it.data as ListResponse).filmItemBigs.isEmpty()) {
                                     _uiState.emit(UiState.Ready.Empty)
                                 } else {
-                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                    _uiState.emit(UiState.Ready.FilmList((it.data as ListResponse).filmItemBigs, filter))
                                 }
 
+                            }
+                            is FilteredSearchResponse -> {
+                                Log.w(TAG, it.toString())
+                                if((it.data as FilteredSearchResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.FilmList((it.data as FilteredSearchResponse).items, filter))
+                                }
+                            }
+                            is KeywordSearchResponse -> {
+                                Log.w(TAG, it.toString())
+                                _uiState.emit(UiState.Ready.FilmList((it.data as KeywordSearchResponse).films, filter))
                             }
                             is FilmItemBig -> {
                                 Log.w(TAG, it.toString())
@@ -62,7 +76,7 @@ class MainViewModel(
                                 if((it.data as SeasonsResponse).items.isEmpty()) {
                                     _uiState.emit(UiState.Ready.Empty)
                                 } else {
-                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
                                 }
                             }
                             is SimilarResponse -> {
@@ -70,7 +84,7 @@ class MainViewModel(
                                 if((it.data as SimilarResponse).items.isEmpty()) {
                                     _uiState.emit(UiState.Ready.Empty)
                                 } else {
-                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
                                 }
                             }
                             is FactsResponse -> {
@@ -89,7 +103,7 @@ class MainViewModel(
                                 if((it.data as TopResponse).films.isEmpty()) {
                                     _uiState.emit(UiState.Ready.Empty)
                                 } else {
-                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
                                 }
                             }
                             else -> {
@@ -122,7 +136,7 @@ class MainViewModel(
 
                 is UiIntent.Show.Favorites -> {
                     _uiState.emit(UiState.IsLoading)
-                    _uiState.emit(UiState.Ready.List(db.getFilms()))
+//                    _uiState.emit(UiState.Ready.FilmList(db.getFilms()))
                 }
                 is UiIntent.Show.Shared -> {
                     _uiState.emit(UiState.IsLoading)

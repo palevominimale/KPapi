@@ -19,6 +19,7 @@ data class FilmItemBig(
     @SerializedName("ratingGoodReview"           ) var ratingGoodReview           : Double?              = null,
     @SerializedName("ratingGoodReviewVoteCount"  ) var ratingGoodReviewVoteCount  : Int?                 = null,
     @SerializedName("ratingKinopoisk"            ) var ratingKinopoisk            : Double?              = null,
+    @SerializedName("rating"                     ) var rating                     : Double?              = null,
     @SerializedName("ratingKinopoiskVoteCount"   ) var ratingKinopoiskVoteCount   : Int?                 = null,
     @SerializedName("ratingImdb"                 ) var ratingImdb                 : Double?              = null,
     @SerializedName("ratingImdbVoteCount"        ) var ratingImdbVoteCount        : Int?                 = null,
@@ -49,5 +50,5 @@ data class FilmItemBig(
     @SerializedName("endYear"                    ) var endYear                    : Int?                 = null,
     @SerializedName("serial"                     ) var serial                     : Boolean?             = null,
     @SerializedName("shortFilm"                  ) var shortFilm                  : Boolean?             = null,
-    @SerializedName("completed"                  ) var completed                  : Boolean?             = null
+    @SerializedName("completed"                  ) var completed                  : Boolean?             = null,
 )

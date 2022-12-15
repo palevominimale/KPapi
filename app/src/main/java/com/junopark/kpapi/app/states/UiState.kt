@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app.states
 
+import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilmFilter
 
@@ -8,7 +9,7 @@ sealed interface UiState {
     object IsLoading : UiState
     sealed interface Ready {
         object Empty : UiState
-        data class List(val data: Any, val filter: FilmFilter = FilmFilter()) : UiState
+        data class FilmList(val data: List<FilmItemBig>, val filter: FilmFilter = FilmFilter()) : UiState
         data class Single(val data: Any, val filter: FilmFilter = FilmFilter()) : UiState
         data class Favorites(val data: FilmItemMini, val filter: FilmFilter = FilmFilter()) : UiState
     }
