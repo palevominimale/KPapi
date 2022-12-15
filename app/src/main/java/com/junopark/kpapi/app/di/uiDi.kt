@@ -8,8 +8,6 @@ val uiDi = module {
     viewModel {
         MainViewModel(
             api = get(),
-            get250 = get(),
-            test = get(),
             db = get()
         )
     }

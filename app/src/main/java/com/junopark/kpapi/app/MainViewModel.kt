@@ -31,8 +31,6 @@ private const val TAG = "MVM"
 
 class MainViewModel(
     private val api: ApiRepo,
-    private val get250: GetTop250FilmsUseCase,
-    private val test: ApiTestUseCase,
     private val db: RoomUseCase
 ) : ViewModel() {
 
@@ -53,7 +51,11 @@ class MainViewModel(
                         when(it.data) {
                             is ListResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as ListResponse).filmItemBigs.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             is FilmItemBig -> {
                                 Log.w(TAG, it.toString())
@@ -61,24 +63,41 @@ class MainViewModel(
                             }
                             is SeasonsResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as SeasonsResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             is SimilarResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
+                                if((it.data as SimilarResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             is FactsResponse -> {
                                 Log.w(TAG, it.toString())
+                                if((it.data as FactsResponse).items.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+
+                                }
                             }
                             is FilterResponse -> {
                                 Log.w(TAG, it.toString())
                             }
                             is TopResponse -> {
-                                _uiState.emit(UiState.Ready.List(it.data, filter))
                                 Log.w(TAG, it.toString())
+                                if((it.data as TopResponse).films.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.List(it.data, filter))
+                                }
                             }
                             else -> {
-                                Log.w(TAG, "unexpected data: ${it.toString()}")
+                                Log.w(TAG, "unexpected data: $it")
                             }
                         }
                     }
