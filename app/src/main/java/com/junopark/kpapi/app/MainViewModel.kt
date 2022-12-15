@@ -34,7 +34,7 @@ class MainViewModel(
 ) : ViewModel() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val _uiState = MutableStateFlow<UiState>(UiState.NoInternet)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Error.NoInternet)
     val uiState : StateFlow<UiState> get() = _uiState
     private var filter: FilmFilter = FilmFilter()
 

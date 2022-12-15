@@ -10,9 +10,9 @@ sealed interface UiIntent {
         object Top: UiIntent
     }
     sealed interface Search {
+        object ByFilter : UiIntent
         data class ByKeyword(val query: String) : UiIntent
         data class ByName(val query: String) : UiIntent
-        data class ByFilter(val filter: FilmFilter) : UiIntent
         data class Relevant(val id: Int) : UiIntent
     }
     sealed interface Filter {

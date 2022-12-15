@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.junopark.kpapi.app.R
 import com.junopark.kpapi.app.ui.theme.Typography
+import com.junopark.kpapi.entities.filter.FilmFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,9 +46,17 @@ fun FilterPad(
     modifier: Modifier = Modifier,
     genres: List<String> = listOf("1","2","3","4"),
     countries: List<String> = listOf("1","2","3","4"),
-    switchFilter: () -> Unit = {}
+    switchFilter: () -> Unit = {},
+    filter: FilmFilter = FilmFilter(),
+    updateFilter: (FilmFilter) -> Unit = {},
+    searchByString: (String) -> Unit = {},
+    searchByFilter: () -> Unit = {}
 ) {
-    var range by remember { mutableStateOf(0f..10f) }
+    var newFilter by remember { mutableStateOf(filter) }
+    var range by remember {
+        mutableStateOf(newFilter.ratingFrom.toFloat()..newFilter.ratingTo.toFloat())
+    }
+
     Surface(
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         color = Color.White,
@@ -60,7 +69,8 @@ fun FilterPad(
     ) {
         Column() {
             SearchBar(
-                switchFilter = { switchFilter() }
+                switchFilter = { switchFilter() },
+                searchUpdate = { }
             )
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -72,30 +82,75 @@ fun FilterPad(
                 )
                 RangeSlider(
                     value = range,
-                    onValueChange = { range = it},
-                    steps = 10,
+                    onValueChange = {
+                        range = it
+                        newFilter = newFilter.copy(
+                            ratingFrom = it.start.toInt(),
+                            ratingTo = it.endInclusive.toInt()
+                        )
+                        updateFilter(newFilter)
+                    },
+                    steps = 11,
+                    valueRange = 0f..10f
                 )
                 DropdownList(
                     items = genres,
                     label = stringResource(id = R.string.search_genres),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onSelect = {
+                        newFilter = newFilter.copy(genres = it)
+                        updateFilter(newFilter)
+                    }
                 )
                 DropdownList(
                     items = countries,
                     label = stringResource(id = R.string.search_countries),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onSelect = {
+                        newFilter = newFilter.copy(countries = it)
+                        updateFilter(newFilter)
+                    }
                 )
+                val sortTypes = stringArrayResource(R.array.search_sort_types).toList()
+                val sortTypesValues = stringArrayResource(R.array.search_sort_types_values).toList()
+                val sortTypesMap = List(sortTypes.size) { index: Int ->
+                    sortTypes[index] to sortTypesValues[index]
+                }.toMap()
                 DropdownList(
-                    items = stringArrayResource(id = R.array.search_sort_types).toList(),
+                    items = sortTypes,
                     label = stringResource(id = R.string.search_sort_label),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onSelect = {
+                        newFilter = newFilter.copy(
+                            order = sortTypesMap[it] ?: "RATING"
+                        )
+                        updateFilter(newFilter)
+                    }
                 )
+                val filmTypes = stringArrayResource(R.array.search_film_types).toList()
+                val filmTypesValues = stringArrayResource(R.array.search_film_types_values).toList()
+                val filmTypesMap = List(filmTypes.size) { index: Int ->
+                    filmTypes[index] to filmTypesValues[index]
+                }.toMap()
                 DropdownList(
-                    items = stringArrayResource(id = R.array.search_film_types).toList(),
+                    items = filmTypes,
                     label = stringResource(id = R.string.search_type_label),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onSelect = {
+                        newFilter = newFilter.copy(
+                            type = filmTypesMap[it] ?: "RATING"
+                        )
+                        updateFilter(newFilter)
+                    }
                 )
-
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    onClick = { searchByFilter() }
+                ) {
+                    Text(text = stringResource(id = R.string.search_button))
+                }
             }
         }
     }
