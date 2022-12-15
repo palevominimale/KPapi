@@ -12,5 +12,4 @@ class RoomUseCase(
     suspend fun addFilm(filmItemMini:FilmItemMini) = favsFilms.addFilm(filmItemMini)
     suspend fun removeFilm(filmItemMini:FilmItemMini) = favsFilms.RemoveFilm(filmItemMini)
 
-
 }
