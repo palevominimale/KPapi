@@ -169,28 +169,4 @@ class MainViewModel(
             }
         }
     }
-
-    fun getFilms() {
-        viewModelScope.launch{
-            db.getFilms()
-        }
-    }
-
-    fun getFilm(id: Int?) {
-        viewModelScope.launch{
-            db.getFilm(id)
-        }
-    }
-
-    fun addFilm(filmItemMini: FilmItemMini) {
-        viewModelScope.launch{
-            db.addFilm(filmItemMini)
-        }
-    }
-
-    fun removeFilm(id: Int) {
-        viewModelScope.launch{
-            db.removeFilm(id)
-        }
-    }
 }
