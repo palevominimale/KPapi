@@ -6,6 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,8 +38,6 @@ fun ListScreen(
     items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
     onSelect: (Int) -> Unit = {}
 ) {
-
-
     val highlight = PlaceholderHighlight.shimmer(
         highlightColor = Color.White,
         animationSpec = PlaceholderDefaults.shimmerAnimationSpec
@@ -108,26 +108,52 @@ fun FilmItem(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp)
             ) {
-                Text(text = "${item.nameRu} (${item.year})", style = Typography.labelMedium)
-                Text(text = item.nameEn.toString(), style = Typography.labelSmall)
-                Text(
-                    text = item.description.toString(),
-                    style = Typography.labelMedium,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = item.genreItems.joinToString(", "),
-                    style = Typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = item.countries.joinToString(", "),
-                    style = Typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if(!item.nameRu.isNullOrBlank()) {
+                    Text(text = "${item.nameRu} (${item.year})", style = Typography.labelMedium)
+                } else if(!item.nameOriginal.isNullOrBlank()) {
+                    Text(text = "${item.nameOriginal} (${item.year})", style = Typography.labelMedium)
+                }
+                if(!item.nameEn.isNullOrBlank()) {
+                    Text(text = item.nameEn.toString(), style = Typography.labelSmall)
+                }
+                if(!item.description.isNullOrBlank()) {
+                    Text(
+                        text = item.description.toString(),
+                        style = Typography.labelMedium,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                } else if(!item.shortDescription.isNullOrBlank()) {
+                    Text(
+                        text = item.shortDescription.toString(),
+                        style = Typography.labelMedium,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if(item.genreItems.isNotEmpty()) {
+                    val genres = item.genreItems.map {
+                        it.genre ?: "no genre"
+                    }
+                    Text(
+                        text = genres.joinToString(", "),
+                        style = Typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if(item.countries.isNotEmpty()) {
+                    val countries = item.countries.map {
+                        it.country ?: "no country"
+                    }
+                    Text(
+                        text = countries.joinToString(", "),
+                        style = Typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
                 Row(
                 ) {
                     Icon(
@@ -138,7 +164,18 @@ fun FilmItem(
                             .padding(end = 4.dp)
                             .size(14.dp)
                     )
-                    Text(text = "${item.filmLength}", style = Typography.labelMedium)
+                    Text(text = item.filmLength ?: "Неизвестно", style = Typography.labelMedium)
+                    if(item.rating != null) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color.Yellow,
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 4.dp)
+                                .size(14.dp)
+                        )
+                        Text(text = item.rating.toString(), style = Typography.labelMedium)
+                    }
                 }
             }
         }

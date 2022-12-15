@@ -53,7 +53,6 @@ class MainViewModel(
                                 } else {
                                     _uiState.emit(UiState.Ready.FilmList((it.data as ListResponse).filmItemBigs, filter))
                                 }
-
                             }
                             is FilteredSearchResponse -> {
                                 Log.w(TAG, it.toString())
@@ -65,7 +64,11 @@ class MainViewModel(
                             }
                             is KeywordSearchResponse -> {
                                 Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.FilmList((it.data as KeywordSearchResponse).films, filter))
+                                if((it.data as KeywordSearchResponse).films.isEmpty()) {
+                                    _uiState.emit(UiState.Ready.Empty)
+                                } else {
+                                    _uiState.emit(UiState.Ready.FilmList((it.data as KeywordSearchResponse).films, filter))
+                                }
                             }
                             is FilmItemBig -> {
                                 Log.w(TAG, it.toString())
@@ -113,11 +116,7 @@ class MainViewModel(
                     }
                     is ApiResult.ApiError -> {
                         Log.w(TAG, "error: $it")
-                        _uiState.emit(
-                            UiState.Error.HttpError(
-                            code = it.code ?: 0,
-                            message = it.message ?: "")
-                        )
+                        _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
                     }
                     is ApiResult.ApiException -> {
                         Log.w(TAG, "exception: $it")

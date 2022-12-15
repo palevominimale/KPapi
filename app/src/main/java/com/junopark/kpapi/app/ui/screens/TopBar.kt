@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.junopark.kpapi.app.ui.theme.Typography
 
 @Composable
@@ -25,7 +26,8 @@ fun TopBar(
         elevation = 5.dp,
         modifier = modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(40.dp)
+            .zIndex(2f),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceAround,

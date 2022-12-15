@@ -64,9 +64,7 @@ class MainActivity : ComponentActivity() {
                             when(state.value) {
                                 is UiState.IsLoading -> {}
                                 is UiState.Error.NoInternet -> { NoInternetScreen() }
-                                is UiState.Ready.Empty -> {
-                                    ErrorScreen(e = Throwable(message = "Ничего не найдено"))
-                                }
+                                is UiState.Ready.Empty -> ErrorScreen(e = Throwable(message = "Ничего не найдено"))
 
                                 is UiState.Ready.Favorites -> {
                                     filter = (state.value as UiState.Ready.Favorites).filter
@@ -81,16 +79,11 @@ class MainActivity : ComponentActivity() {
                                     filter = (state.value as UiState.Ready.Single).filter
                                 }
 
-                                is UiState.Error.HttpError -> {
-                                    ErrorScreen(
+                                is UiState.Error.HttpError -> ErrorScreen(
                                         code = (state.value as UiState.Error.HttpError).code,
                                         message = (state.value as UiState.Error.HttpError).message
                                     )
-                                }
-                                is UiState.Error.Exception -> {
-                                    ErrorScreen(e = (state.value as UiState.Error.Exception).e)
-                                }
-
+                                is UiState.Error.Exception -> ErrorScreen(e = (state.value as UiState.Error.Exception).e)
                                 else -> {}
                             }
                         }
