@@ -20,6 +20,8 @@ sealed interface UiIntent {
         data class Set(val filter: FilmFilter) : UiIntent
     }
     sealed interface Favorites {
+        object GetFilms : UiIntent
+        data class GetFilm(val id: Int) : UiIntent
         data class Add(val item: FilmItemMini) : UiIntent
         data class Remove(val id: Int) : UiIntent
     }
