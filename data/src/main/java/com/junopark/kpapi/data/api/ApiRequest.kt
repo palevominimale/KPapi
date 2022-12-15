@@ -49,7 +49,7 @@ interface ApiRequest {
     @GET("v2.2/films/{id}/similars")
     fun getSimilar(@Path("id") id: Int) : Call<SimilarResponse>
 
-    @GET("v2.2/films/{id}/sequels_and_prequels")
+    @GET("v2.1/films/{id}/sequels_and_prequels")
     fun getRelated(@Path("id") id: Int) : Call<List<FilmItemMini>>
 
     @GET("v2.2/films/filters")
@@ -70,13 +70,13 @@ interface ApiRequest {
         @Query("page") page : Int = 1,
     ) : Call<FilteredSearchResponse>
 
-    @GET("v2.2/films/search-by-keyword?")
+    @GET("v2.1/films/search-by-keyword?")
     fun getByKeywordSearch(
-        @Query("query") query : String = "",
+        @Query("keyword") query : String = "",
         @Query("page") page : Int = 1,
     ) : Call<KeywordSearchResponse>
 
-    @GET("v2.2/films/releases?")
+    @GET("v2.1/films/releases?")
     fun getReleases(
         @Query("year") year : Int = 2022,
         @Query("month") month : String = "JANUARY",

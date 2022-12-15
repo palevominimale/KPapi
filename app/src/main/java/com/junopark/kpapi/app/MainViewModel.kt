@@ -98,6 +98,7 @@ class MainViewModel(
                         }
                     }
                     is ApiResult.ApiError -> {
+                        Log.w(TAG, "error: $it")
                         _uiState.emit(
                             UiState.Error.HttpError(
                             code = it.code ?: 0,
@@ -105,6 +106,7 @@ class MainViewModel(
                         )
                     }
                     is ApiResult.ApiException -> {
+                        Log.w(TAG, "exception: $it")
                         _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
                     }
                 }
