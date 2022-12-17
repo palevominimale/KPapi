@@ -12,7 +12,7 @@ class PrefsRepoImpl(
 
     private val prefsName = context.getString(R.string.preferences_name)
     private val prefs = context.getSharedPreferences(prefsName,Context.MODE_PRIVATE)
-    private var editor = prefs.edit()
+    private val editor = prefs.edit()
     private val gson = Gson()
 
     override fun setPrefs(prefs: PrefsDTO) {
