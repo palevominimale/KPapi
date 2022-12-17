@@ -38,7 +38,7 @@ class ApiRepoImpl : ApiRepo {
             .create(ApiRequest::class.java)
     }
 
-    private suspend fun <T> handleApi(execute: () -> Call<T>) : ApiResult {
+    private suspend fun <T> handleApi(execute: suspend () -> Call<T>) : ApiResult {
         return try {
             val response = execute.invoke().execute()
             val body = response.body()

@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +37,9 @@ import com.junopark.kpapi.entities.films.FilmItemBig
 fun ListScreen(
     modifier: Modifier = Modifier,
     items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
-    onSelect: (Int) -> Unit = {}
+    onSelect: (Int, TYPE) -> Unit = { id, type ->
+        Pair(id, type)
+    }
 ) {
     val highlight = PlaceholderHighlight.shimmer(
         highlightColor = Color.White,
@@ -49,17 +52,28 @@ fun ListScreen(
     ) {
         items.forEach {
             item {
-                FilmItem(it, highlight)
+                FilmItem(
+                    item = it,
+                    highlight = highlight,
+                    onSelect = { id, type ->
+                        onSelect(id, type)
+                    })
             }
         }
     }
 
 }
 
+enum class TYPE {
+    KINOPOISK_ID,
+    FILM_ID
+}
+
 @Composable
 fun FilmItem(
     item: FilmItemBig,
-    highlight: PlaceholderHighlight
+    highlight: PlaceholderHighlight,
+    onSelect: (Int, TYPE) -> Unit
 ) {
 
     Surface(
@@ -69,6 +83,13 @@ fun FilmItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable {
+                if(item.filmId != null) {
+                    onSelect(item.filmId!!, TYPE.FILM_ID)
+                } else if(item.kinopoiskId != null) {
+                    onSelect(item.kinopoiskId!!, TYPE.KINOPOISK_ID)
+                }
+            }
     ) {
         Row(
             modifier = Modifier.padding(8.dp)
@@ -154,17 +175,19 @@ fun FilmItem(
                     )
                 }
 
-                Row(
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_time_24),
-                        contentDescription = null,
-                        tint = Color.LightGray,
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .size(14.dp)
-                    )
-                    Text(text = item.filmLength ?: "Неизвестно", style = Typography.labelMedium)
+                Row {
+                    if(!item.filmLength.isNullOrBlank()) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_time_24),
+                            contentDescription = null,
+                            tint = Color.LightGray,
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .size(14.dp)
+                        )
+                        Text(text = item.filmLength!!, style = Typography.labelMedium)
+                    }
+
                     if(item.rating != null) {
                         Icon(
                             imageVector = Icons.Default.Star,
