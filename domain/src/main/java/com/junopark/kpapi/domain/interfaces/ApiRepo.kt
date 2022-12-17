@@ -30,15 +30,6 @@ interface ApiRepo {
         keyword : String? = null,
         page : Int? = 1,
     )
-    suspend fun getByFilter(
-        order : String? = null,
-        type : String? = null,
-        ratingFrom : Int? = 0,
-        ratingTo : Int? = 10,
-        yearFrom : Int? = 1000,
-        yearTo : Int? = 3000,
-        page : Int? = 1,
-    )
     suspend fun getByKeywordSearch(
         query : String = "",
         page : Int = 1,

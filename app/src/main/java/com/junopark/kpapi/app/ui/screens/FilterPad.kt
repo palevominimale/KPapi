@@ -54,7 +54,7 @@ fun FilterPad(
 ) {
     var newFilter by remember { mutableStateOf(filter) }
     var range by remember {
-        mutableStateOf(newFilter.ratingFrom.toFloat()..newFilter.ratingTo.toFloat())
+        mutableStateOf((filter.ratingFrom?.toFloat() ?: 0f)..(filter.ratingTo?.toFloat() ?: 10f))
     }
 
     Surface(

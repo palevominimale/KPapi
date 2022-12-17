@@ -76,17 +76,6 @@ class ApiRepoImpl : ApiRepo {
     ) = apiState.emit(handleApi {
             retrofit.getByFilter(countries, genres, order, type, ratingFrom, ratingTo, yearFrom, yearTo, imdbId, keyword, page)
         })
-    override suspend fun getByFilter(
-        order: String?,
-        type: String?,
-        ratingFrom: Int?,
-        ratingTo: Int?,
-        yearFrom: Int?,
-        yearTo: Int?,
-        page: Int?
-    ) = apiState.emit(handleApi {
-            retrofit.getByFilter(order, type, ratingFrom, ratingTo, yearFrom, yearTo, page)
-        })
 
     override suspend fun getByKeywordSearch(query: String, page: Int) =
         apiState.emit(handleApi { retrofit.getByKeywordSearch(query, page) })

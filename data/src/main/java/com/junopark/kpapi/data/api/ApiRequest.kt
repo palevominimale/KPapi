@@ -24,7 +24,7 @@ interface ApiRequest {
 
     @GET("v2.2/films/top")
     fun getTop(
-        @Query("type") type: String = TOP_250,
+        @Query("type") type: String? = null,
         @Query("page") page: Int = 1,
     ): Call<ListResponse>
 
@@ -61,29 +61,18 @@ interface ApiRequest {
         @Query("genres") genres : String? = null,
         @Query("order") order : String? = null,
         @Query("type") type : String? = null,
-        @Query("ratingFrom") ratingFrom : Int? = 0,
-        @Query("ratingTo") ratingTo : Int? = 10,
-        @Query("yearFrom") yearFrom : Int? = 1000,
-        @Query("yearTo") yearTo : Int? = 3000,
+        @Query("ratingFrom") ratingFrom : Int? = null,
+        @Query("ratingTo") ratingTo : Int? = null,
+        @Query("yearFrom") yearFrom : Int? = null,
+        @Query("yearTo") yearTo : Int? = null,
         @Query("imdbId") imdbId : String? = null,
         @Query("keyword") keyword : String? = null,
-        @Query("page") page : Int? = 1,
+        @Query("page") page : Int? = null,
     ) : Call<FilteredSearchResponse>
 
     @GET("v2.2/films?")
     fun getByImdbId(
         @Query("imdbId") imdbId : String? = null,
-        @Query("page") page : Int? = 1,
-    ) : Call<FilteredSearchResponse>
-
-    @GET("v2.2/films?")
-    fun getByFilter(
-        @Query("order") order : String? = null,
-        @Query("type") type : String? = null,
-        @Query("ratingFrom") ratingFrom : Int? = 0,
-        @Query("ratingTo") ratingTo : Int? = 10,
-        @Query("yearFrom") yearFrom : Int? = 1000,
-        @Query("yearTo") yearTo : Int? = 3000,
         @Query("page") page : Int? = 1,
     ) : Call<FilteredSearchResponse>
 
@@ -113,6 +102,5 @@ interface ApiRequest {
 
     companion object {
         const val BASE_URL = """https://kinopoiskapiunofficial.tech/api/"""
-        const val TOP_250 = "TOP_250_BEST_FILMS"
     }
 }
