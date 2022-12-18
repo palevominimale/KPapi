@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,10 +42,10 @@ class MainActivity : ComponentActivity() {
                     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
                 )
                 var filter by remember { mutableStateOf(FilmFilter()) }
-                var countries by remember { mutableStateOf(listOf(CountryItem())) }
-                var genres by remember { mutableStateOf(listOf(GenreItem())) }
+                val countries by remember { mutableStateOf(listOf(CountryItem())) }
+                val genres by remember { mutableStateOf(listOf(GenreItem())) }
                 val scope = rememberCoroutineScope()
-
+                val listState = LazyListState(0)
                 if(state.value == UiState.Splash) {
                     SplashScreen()
                 } else {
@@ -65,61 +66,13 @@ class MainActivity : ComponentActivity() {
                             countries = countries
                         ) }
                     ) {
-                        Box(
-                            modifier = Modifier.padding(it)
-                        ) {
-
-                            NavigationGraph(
-                                modifier = Modifier.padding(it),
-                                navController = navController,
-                                state = state.value,
-                                reducer = { intent -> vm.reduce(intent) }
-                            )
-
-//                            when(state.value) {
-//                                is UiState.IsLoading -> {}
-//                                is UiState.Error.NoInternet -> NoInternetScreen()
-//                                is UiState.Ready.Empty -> ErrorScreen(code = 0, message = "Ничего не найдено")
-//
-//                                is UiState.Ready.Favorites -> {
-//                                    filter = (state.value as UiState.Ready.Favorites).prefs.filter ?: FilmFilter()
-//                                    if((state.value as UiState.Ready.Favorites).prefs.genres != null) {
-//                                        genres = (state.value as UiState.Ready.Favorites).prefs.genres!!
-//                                    }
-//                                    if((state.value as UiState.Ready.Favorites).prefs.countries != null) {
-//                                        countries = (state.value as UiState.Ready.Favorites).prefs.countries!!
-//                                    }
-//                                }
-//                                is UiState.Ready.FilmList -> {
-//                                    filter = (state.value as UiState.Ready.FilmList).prefs.filter ?: FilmFilter()
-//                                    if((state.value as UiState.Ready.FilmList).prefs.genres != null) {
-//                                        genres = (state.value as UiState.Ready.FilmList).prefs.genres!!
-//                                    }
-//                                    if((state.value as UiState.Ready.FilmList).prefs.countries != null) {
-//                                        countries = (state.value as UiState.Ready.FilmList).prefs.countries!!
-//                                    }
-//                                    ListScreen(
-//                                        items = (state.value as UiState.Ready.FilmList).data
-//                                    )
-//                                }
-//                                is UiState.Ready.Single -> {
-//                                    filter = (state.value as UiState.Ready.Single).prefs.filter ?: FilmFilter()
-//                                    if((state.value as UiState.Ready.Single).prefs.genres != null) {
-//                                        genres = (state.value as UiState.Ready.Single).prefs.genres!!
-//                                    }
-//                                    if((state.value as UiState.Ready.Single).prefs.countries != null) {
-//                                        countries = (state.value as UiState.Ready.Single).prefs.countries!!
-//                                    }
-//                                }
-//
-//                                is UiState.Error.HttpError -> ErrorScreen(
-//                                        code = (state.value as UiState.Error.HttpError).code,
-//                                        message = (state.value as UiState.Error.HttpError).message
-//                                    )
-//                                is UiState.Error.Exception -> ErrorScreen(e = (state.value as UiState.Error.Exception).e)
-//                                else -> {}
-//                            }
-                        }
+                        NavigationGraph(
+                            modifier = Modifier.padding(it),
+                            navController = navController,
+                            state = state.value,
+                            reducer = { intent -> vm.reduce(intent) },
+                            listState = listState
+                        )
                     }
                 }
             }

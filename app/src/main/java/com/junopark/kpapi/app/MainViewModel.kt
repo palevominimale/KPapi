@@ -46,25 +46,20 @@ class MainViewModel(
                 Log.w(TAG, "$it")
                 when(it) {
                     is ApiResult.ApiSuccess.FilmList -> {
-                        previousState = _uiState.value
                         _uiState.emit(UiState.Ready.FilmList(it.items,currentPrefs))
                     }
                     is ApiResult.ApiSuccess.SingleFilm -> {
-                        previousState = _uiState.value
                         _uiState.emit(UiState.Ready.Single(it.item, currentPrefs))
                     }
                     is ApiResult.ApiSuccess.Empty -> {
-                        previousState = _uiState.value
                         _uiState.emit(UiState.Ready.Empty)
                     }
                     is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries))
 
                     is ApiResult.ApiError -> {
-                        previousState = _uiState.value
                         _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
                     }
                     is ApiResult.ApiException -> {
-                        previousState = _uiState.value
                         _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
                     }
                     else -> {}
@@ -74,24 +69,29 @@ class MainViewModel(
     }
 
     fun reduce(intent: UiIntent) {
+        Log.w(TAG, intent.toString())
         scope.launch {
             when(intent) {
                 is UiIntent.Filter.Clear -> currentPrefs = currentPrefs.copy(filter = FilmFilter())
                 is UiIntent.Filter.Set -> currentPrefs = currentPrefs.copy(filter = intent.filter)
 
                 is UiIntent.Show.Favorites -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
 //                    _uiState.emit(UiState.Ready.FilmList(db.getFilms()))
                 }
                 is UiIntent.Show.Shared -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                 }
                 is UiIntent.Show.Top -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     api.getTop()
                 }
 
                 is UiIntent.Search.ByFilter -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     if(currentPrefs.genres == null) {
                         api.getByFilter(
@@ -119,6 +119,7 @@ class MainViewModel(
 
                 }
                 is UiIntent.Search.ByKeyword -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     if(currentPrefs.filter?.keyword != null) {
                         api.getByKeywordSearch(
@@ -130,6 +131,7 @@ class MainViewModel(
 
                 }
                 is UiIntent.Search.ByName -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     if(currentPrefs.filter?.keyword != null) {
                         api.getByKeywordSearch(
@@ -140,10 +142,12 @@ class MainViewModel(
                     }
                 }
                 is UiIntent.Search.Relevant -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     api.getSimilar(intent.id)
                 }
                 is UiIntent.Search.ById -> {
+                    previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
                     api.getById(intent.id)
                 }

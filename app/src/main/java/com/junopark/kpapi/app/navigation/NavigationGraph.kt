@@ -1,16 +1,14 @@
 package com.junopark.kpapi.app.navigation
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
-import kotlinx.coroutines.flow.last
 
 @Composable
 fun NavigationGraph(
@@ -18,12 +16,14 @@ fun NavigationGraph(
     navController: NavHostController,
     state: UiState,
     reducer: (UiIntent) -> Unit,
+    listState: LazyListState
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "splash"
     ) {
+
         composable(NavigationItem.Splash.route) {
             SplashScreen()
         }
@@ -33,11 +33,11 @@ fun NavigationGraph(
                 is UiState.Ready.FilmList -> ListScreen(
                     modifier = modifier,
                     items = state.data,
-                    onBack = { reducer(UiIntent.Navigate.Back) },
                     onSelect = { id ->
                         navController.navigate(NavigationItem.Single.route)
                         reducer(UiIntent.Search.ById(id))
-                    }
+                    },
+                    state = listState
                 )
                 else -> {}
             }
@@ -46,7 +46,14 @@ fun NavigationGraph(
         composable(NavigationItem.Single.route) {
             when(state) {
                 is UiState.IsLoading -> FilmDescriptionScreen(modifier = modifier)
-                is UiState.Ready.Single -> FilmDescriptionScreen(modifier = modifier, item = state.data)
+                is UiState.Ready.Single -> FilmDescriptionScreen(
+                    modifier = modifier,
+                    item = state.data,
+                    onBack = {
+                        reducer(UiIntent.Navigate.Back)
+                        navController.popBackStack()
+                    }
+                )
                 else -> {}
             }
         }
@@ -54,7 +61,8 @@ fun NavigationGraph(
         composable(NavigationItem.Favs.route) {
             when(state) {
                 is UiState.IsLoading -> ListScreen(modifier = modifier)
-                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data)
+                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data,
+                    state = listState)
                 else -> {}
             }
         }
@@ -69,4 +77,16 @@ fun NavigationGraph(
             }
         }
     }
+
+    when(state) {
+    is UiState.IsLoading -> {}
+    is UiState.Ready.Favorites -> navController.navigate(NavigationItem.List.route)
+    is UiState.Ready.FilmList -> navController.navigate(NavigationItem.List.route)
+    is UiState.Ready.Single -> navController.navigate(NavigationItem.Single.route)
+    is UiState.Error.HttpError -> navController.navigate(NavigationItem.Error.route)
+    is UiState.Error.Exception -> navController.navigate(NavigationItem.Error.route)
+    is UiState.Error.NoInternet -> navController.navigate(NavigationItem.Error.route)
+    is UiState.Ready.Empty -> navController.navigate(NavigationItem.Error.route)
+    else -> {}
+}
 }

@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -39,16 +41,15 @@ fun ListScreen(
     modifier: Modifier = Modifier,
     items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
     onSelect: (Int) -> Unit = {},
-    onBack: () -> Unit = {}
+    state: LazyListState = LazyListState(0)
 ) {
     val highlight = PlaceholderHighlight.shimmer(
         highlightColor = Color.White,
         animationSpec = PlaceholderDefaults.shimmerAnimationSpec
     )
 
-    BackHandler { onBack() }
-
     LazyColumn(
+        state = state,
         modifier = modifier
             .fillMaxSize()
     ) {
@@ -80,9 +81,9 @@ fun FilmItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
-                if(item.filmId != null) {
+                if (item.filmId != null) {
                     onSelect(item.filmId!!)
-                } else if(item.kinopoiskId != null) {
+                } else if (item.kinopoiskId != null) {
                     onSelect(item.kinopoiskId!!)
                 }
             }
