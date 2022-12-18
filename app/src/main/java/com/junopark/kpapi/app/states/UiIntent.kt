@@ -25,4 +25,7 @@ sealed interface UiIntent {
         data class Add(val item: FilmItemMini) : UiIntent
         data class Remove(val id: Int) : UiIntent
     }
+    sealed interface Navigate {
+        object Back : UiIntent
+    }
 }

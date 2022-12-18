@@ -34,6 +34,7 @@ fun TopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = label, style = Typography.bodyLarge)
+
         }
     }
 }

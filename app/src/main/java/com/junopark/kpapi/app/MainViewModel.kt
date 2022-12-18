@@ -27,6 +27,7 @@ class MainViewModel(
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _uiState = MutableStateFlow<UiState>(UiState.Error.NoInternet)
+    private var previousState : UiState = UiState.Ready.Empty
     val uiState : StateFlow<UiState> get() = _uiState
     private var currentPrefs: PrefsDTO = PrefsDTO()
 
@@ -44,13 +45,28 @@ class MainViewModel(
             api.state.collect {
                 Log.w(TAG, "$it")
                 when(it) {
-                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmList(it.items,currentPrefs))
-                    is ApiResult.ApiSuccess.SingleFilm -> _uiState.emit(UiState.Ready.Single(it, currentPrefs))
-                    is ApiResult.ApiSuccess.Empty -> _uiState.emit(UiState.Ready.Empty)
+                    is ApiResult.ApiSuccess.FilmList -> {
+                        previousState = _uiState.value
+                        _uiState.emit(UiState.Ready.FilmList(it.items,currentPrefs))
+                    }
+                    is ApiResult.ApiSuccess.SingleFilm -> {
+                        previousState = _uiState.value
+                        _uiState.emit(UiState.Ready.Single(it, currentPrefs))
+                    }
+                    is ApiResult.ApiSuccess.Empty -> {
+                        previousState = _uiState.value
+                        _uiState.emit(UiState.Ready.Empty)
+                    }
                     is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries))
 
-                    is ApiResult.ApiError -> _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
-                    is ApiResult.ApiException -> _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                    is ApiResult.ApiError -> {
+                        previousState = _uiState.value
+                        _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
+                    }
+                    is ApiResult.ApiException -> {
+                        previousState = _uiState.value
+                        _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                    }
                     else -> {}
                 }
             }
@@ -132,6 +148,8 @@ class MainViewModel(
                 is UiIntent.Favorites.GetFilm -> db.getFilm(intent.id)
                 is UiIntent.Favorites.Add -> db.addFilm(intent.item)
                 is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
+
+                is UiIntent.Navigate.Back -> { _uiState.emit(previousState) }
             }
         }
     }

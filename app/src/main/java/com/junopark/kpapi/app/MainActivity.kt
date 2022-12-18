@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
@@ -31,6 +32,8 @@ class MainActivity : ComponentActivity() {
         vm.reduce(UiIntent.Show.Top)
         setContent {
             val state = vm.uiState.collectAsState()
+            val navController = rememberNavController()
+
             KPapiTheme {
                 val scaffoldState = rememberBottomSheetScaffoldState(
                     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -39,6 +42,7 @@ class MainActivity : ComponentActivity() {
                 var countries by remember { mutableStateOf(listOf(CountryItem())) }
                 var genres by remember { mutableStateOf(listOf(GenreItem())) }
                 val scope = rememberCoroutineScope()
+
                 if(state.value == UiState.Splash) {
                     SplashScreen()
                 } else {
@@ -47,15 +51,11 @@ class MainActivity : ComponentActivity() {
                         sheetPeekHeight = 72.dp,
                         topBar = { TopBar(label = "KP Api test App") },
                         sheetContent = { FilterPad(
-                            switchFilter = {
-                                scope.launch {
+                            switchFilter = { scope.launch {
                                     if (scaffoldState.bottomSheetState.isCollapsed) {
                                         scaffoldState.bottomSheetState.expand()
-                                    } else {
-                                        scaffoldState.bottomSheetState.collapse()
-                                    }
-                                }
-                            },
+                                    } else scaffoldState.bottomSheetState.collapse()
+                                }},
                             updateFilter = { vm.reduce(UiIntent.Filter.Set(it)) },
                             searchByString = { vm.reduce(UiIntent.Search.ByName(it)) },
                             searchByFilter = { vm.reduce(UiIntent.Search.ByFilter)},
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             when(state.value) {
                                 is UiState.IsLoading -> {}
-                                is UiState.Error.NoInternet -> { NoInternetScreen() }
+                                is UiState.Error.NoInternet -> NoInternetScreen()
                                 is UiState.Ready.Empty -> ErrorScreen(code = 0, message = "Ничего не найдено")
 
                                 is UiState.Ready.Favorites -> {
