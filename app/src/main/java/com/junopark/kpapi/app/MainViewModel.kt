@@ -51,7 +51,7 @@ class MainViewModel(
                     }
                     is ApiResult.ApiSuccess.SingleFilm -> {
                         previousState = _uiState.value
-                        _uiState.emit(UiState.Ready.Single(it, currentPrefs))
+                        _uiState.emit(UiState.Ready.Single(it.item, currentPrefs))
                     }
                     is ApiResult.ApiSuccess.Empty -> {
                         previousState = _uiState.value
@@ -142,6 +142,10 @@ class MainViewModel(
                 is UiIntent.Search.Relevant -> {
                     _uiState.emit(UiState.IsLoading)
                     api.getSimilar(intent.id)
+                }
+                is UiIntent.Search.ById -> {
+                    _uiState.emit(UiState.IsLoading)
+                    api.getById(intent.id)
                 }
 
                 is UiIntent.Favorites.GetFilms -> db.getFilms()

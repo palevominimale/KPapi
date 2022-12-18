@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,14 +38,15 @@ import com.junopark.kpapi.entities.films.FilmItemBig
 fun ListScreen(
     modifier: Modifier = Modifier,
     items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
-    onSelect: (Int, TYPE) -> Unit = { id, type ->
-        Pair(id, type)
-    }
+    onSelect: (Int) -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     val highlight = PlaceholderHighlight.shimmer(
         highlightColor = Color.White,
         animationSpec = PlaceholderDefaults.shimmerAnimationSpec
     )
+
+    BackHandler { onBack() }
 
     LazyColumn(
         modifier = modifier
@@ -55,25 +57,19 @@ fun ListScreen(
                 FilmItem(
                     item = it,
                     highlight = highlight,
-                    onSelect = { id, type ->
-                        onSelect(id, type)
-                    })
+                    onSelect = { onSelect(it) }
+                )
             }
         }
     }
 
 }
 
-enum class TYPE {
-    KINOPOISK_ID,
-    FILM_ID
-}
-
 @Composable
 fun FilmItem(
     item: FilmItemBig,
     highlight: PlaceholderHighlight,
-    onSelect: (Int, TYPE) -> Unit
+    onSelect: (Int) -> Unit
 ) {
 
     Surface(
@@ -85,9 +81,9 @@ fun FilmItem(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
                 if(item.filmId != null) {
-                    onSelect(item.filmId!!, TYPE.FILM_ID)
+                    onSelect(item.filmId!!)
                 } else if(item.kinopoiskId != null) {
-                    onSelect(item.kinopoiskId!!, TYPE.KINOPOISK_ID)
+                    onSelect(item.kinopoiskId!!)
                 }
             }
     ) {

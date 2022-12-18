@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +19,13 @@ import com.junopark.kpapi.app.R
 
 @Composable
 @Preview
-fun NoInternetScreen() {
+fun NoInternetScreen(
+    onBack: () -> Unit = {}
+) {
+
+    BackHandler { onBack() }
+
+
     Surface(
         color = Color.White,
         modifier = Modifier

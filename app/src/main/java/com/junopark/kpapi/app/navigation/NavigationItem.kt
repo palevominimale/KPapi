@@ -5,4 +5,5 @@ sealed class NavigationItem(val route: String) {
     object List : NavigationItem("list")
     object Single : NavigationItem("single")
     object Favs : NavigationItem("favs")
+    object Error : NavigationItem("error")
 }

@@ -3,14 +3,14 @@ package com.junopark.kpapi.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
-import com.junopark.kpapi.app.ui.screens.ListScreen
-import com.junopark.kpapi.app.ui.screens.SplashScreen
-import com.junopark.kpapi.app.ui.screens.TYPE
+import com.junopark.kpapi.app.ui.screens.*
+import kotlinx.coroutines.flow.last
 
 @Composable
 fun NavigationGraph(
@@ -28,17 +28,45 @@ fun NavigationGraph(
             SplashScreen()
         }
         composable(NavigationItem.List.route) {
-            val localState = state as UiState.Ready.FilmList
-            ListScreen(
-                modifier = modifier,
-                items = localState.data,
-            )
+            when(state) {
+                is UiState.IsLoading -> ListScreen(modifier = modifier)
+                is UiState.Ready.FilmList -> ListScreen(
+                    modifier = modifier,
+                    items = state.data,
+                    onBack = { reducer(UiIntent.Navigate.Back) },
+                    onSelect = { id ->
+                        navController.navigate(NavigationItem.Single.route)
+                        reducer(UiIntent.Search.ById(id))
+                    }
+                )
+                else -> {}
+            }
         }
+
         composable(NavigationItem.Single.route) {
-//            SingleScreen()
+            when(state) {
+                is UiState.IsLoading -> FilmDescriptionScreen(modifier = modifier)
+                is UiState.Ready.Single -> FilmDescriptionScreen(modifier = modifier, item = state.data)
+                else -> {}
+            }
         }
+
         composable(NavigationItem.Favs.route) {
-//            FavsScreen()
+            when(state) {
+                is UiState.IsLoading -> ListScreen(modifier = modifier)
+                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data)
+                else -> {}
+            }
+        }
+        composable(NavigationItem.Error.route) {
+            when(state) {
+                is UiState.Error.NoInternet -> NoInternetScreen(
+                        onBack = { navController.navigate(navController.currentBackStackEntry?.id ?: "splash") }
+                    )
+                is UiState.Error.HttpError -> ErrorScreen(state.code, state.message)
+                is UiState.Error.Exception -> ErrorScreen(e = state.e)
+                else -> {}
+            }
         }
     }
 }

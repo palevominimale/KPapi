@@ -15,7 +15,7 @@ sealed interface UiState {
             val prefs: PrefsDTO
         ) : UiState
         data class Single(
-            val data: Any,
+            val data: FilmItemBig,
             val prefs: PrefsDTO
         ) : UiState
         data class Favorites(

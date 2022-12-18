@@ -14,6 +14,7 @@ sealed interface UiIntent {
         data class ByKeyword(val query: String) : UiIntent
         data class ByName(val query: String) : UiIntent
         data class Relevant(val id: Int) : UiIntent
+        data class ById (val id: Int) : UiIntent
     }
     sealed interface Filter {
         object Clear : UiIntent

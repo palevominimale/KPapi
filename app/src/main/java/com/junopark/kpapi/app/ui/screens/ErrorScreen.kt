@@ -1,5 +1,6 @@
 package com.junopark.kpapi.app.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,12 +24,16 @@ fun ErrorScreen(
     code: Int? = null,
     message: String? = null,
     e: Throwable? = null,
+    onBack: () -> Unit = {}
 ) {
     Surface(
         color = Color.White,
         modifier = Modifier
             .fillMaxSize()
     ) {
+
+        BackHandler { onBack() }
+
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
