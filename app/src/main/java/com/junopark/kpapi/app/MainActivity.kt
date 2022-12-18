@@ -15,7 +15,8 @@ import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
 import com.junopark.kpapi.app.ui.theme.KPapiTheme
-import com.junopark.kpapi.entities.ListResponse
+import com.junopark.kpapi.entities.common.CountryItem
+import com.junopark.kpapi.entities.common.GenreItem
 import com.junopark.kpapi.entities.filter.FilmFilter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -35,6 +36,8 @@ class MainActivity : ComponentActivity() {
                     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
                 )
                 var filter by remember { mutableStateOf(FilmFilter()) }
+                var countries by remember { mutableStateOf(listOf(CountryItem())) }
+                var genres by remember { mutableStateOf(listOf(GenreItem())) }
                 val scope = rememberCoroutineScope()
                 if(state.value == UiState.Splash) {
                     SplashScreen()
@@ -55,7 +58,9 @@ class MainActivity : ComponentActivity() {
                             },
                             updateFilter = { vm.reduce(UiIntent.Filter.Set(it)) },
                             searchByString = { vm.reduce(UiIntent.Search.ByName(it)) },
-                            searchByFilter = { vm.reduce(UiIntent.Search.ByFilter)}
+                            searchByFilter = { vm.reduce(UiIntent.Search.ByFilter)},
+                            genres = genres,
+                            countries = countries
                         ) }
                     ) {
                         Box(
@@ -64,19 +69,37 @@ class MainActivity : ComponentActivity() {
                             when(state.value) {
                                 is UiState.IsLoading -> {}
                                 is UiState.Error.NoInternet -> { NoInternetScreen() }
-                                is UiState.Ready.Empty -> ErrorScreen(e = Throwable(message = "Ничего не найдено"))
+                                is UiState.Ready.Empty -> ErrorScreen(code = 0, message = "Ничего не найдено")
 
                                 is UiState.Ready.Favorites -> {
-                                    filter = (state.value as UiState.Ready.Favorites).filter
+                                    filter = (state.value as UiState.Ready.Favorites).prefs.filter ?: FilmFilter()
+                                    if((state.value as UiState.Ready.Favorites).prefs.genres != null) {
+                                        genres = (state.value as UiState.Ready.Favorites).prefs.genres!!
+                                    }
+                                    if((state.value as UiState.Ready.Favorites).prefs.countries != null) {
+                                        countries = (state.value as UiState.Ready.Favorites).prefs.countries!!
+                                    }
                                 }
                                 is UiState.Ready.FilmList -> {
-                                    filter = (state.value as UiState.Ready.FilmList).filter
+                                    filter = (state.value as UiState.Ready.FilmList).prefs.filter ?: FilmFilter()
+                                    if((state.value as UiState.Ready.FilmList).prefs.genres != null) {
+                                        genres = (state.value as UiState.Ready.FilmList).prefs.genres!!
+                                    }
+                                    if((state.value as UiState.Ready.FilmList).prefs.countries != null) {
+                                        countries = (state.value as UiState.Ready.FilmList).prefs.countries!!
+                                    }
                                     ListScreen(
                                         items = (state.value as UiState.Ready.FilmList).data
                                     )
                                 }
                                 is UiState.Ready.Single -> {
-                                    filter = (state.value as UiState.Ready.Single).filter
+                                    filter = (state.value as UiState.Ready.Single).prefs.filter ?: FilmFilter()
+                                    if((state.value as UiState.Ready.Single).prefs.genres != null) {
+                                        genres = (state.value as UiState.Ready.Single).prefs.genres!!
+                                    }
+                                    if((state.value as UiState.Ready.Single).prefs.countries != null) {
+                                        countries = (state.value as UiState.Ready.Single).prefs.countries!!
+                                    }
                                 }
 
                                 is UiState.Error.HttpError -> ErrorScreen(

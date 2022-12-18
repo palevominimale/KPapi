@@ -12,6 +12,8 @@ import com.junopark.kpapi.entities.distribution.DistributionResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.filter.FilterResponse
+import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
+import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,16 +52,18 @@ class ApiRepoImpl : ApiRepo {
             val response = execute.invoke().execute()
             val body = response.body()
             if(response.isSuccessful && body != null) when(body) {
-                is ListResponse ->          ApiResult.ApiSuccess.FilmList(items = body.filmItemBigs)
-                is SimilarResponse ->       ApiResult.ApiSuccess.FilmList(items = body.items)
-                is FilmItemBig ->           ApiResult.ApiSuccess.SingleFilm(item = body)
-                is SeasonsResponse ->       ApiResult.ApiSuccess.EpisodesList(items = body.items)
-                is FactsResponse ->         ApiResult.ApiSuccess.FactsList(items = body.items)
-                is DistributionResponse ->  ApiResult.ApiSuccess.DistributionList(items = body.items)
-                is BoxOfficeResponse ->     ApiResult.ApiSuccess.BoxOfficeList(items = body.items)
-                is AwardsResponse ->        ApiResult.ApiSuccess.AwardsList(items = body.items)
-                is FilterResponse ->        ApiResult.ApiSuccess.FiltersList(item = body)
-                else ->                     ApiResult.ApiSuccess.Empty
+                is ListResponse ->              ApiResult.ApiSuccess.FilmList(items = body.items)
+                is SimilarResponse ->           ApiResult.ApiSuccess.FilmList(items = body.items)
+                is KeywordSearchResponse ->     ApiResult.ApiSuccess.FilmList(items = body.films)
+                is FilteredSearchResponse ->    ApiResult.ApiSuccess.FilmList(items = body.items)
+                is FilmItemBig ->               ApiResult.ApiSuccess.SingleFilm(item = body)
+                is SeasonsResponse ->           ApiResult.ApiSuccess.EpisodesList(items = body.items)
+                is FactsResponse ->             ApiResult.ApiSuccess.FactsList(items = body.items)
+                is DistributionResponse ->      ApiResult.ApiSuccess.DistributionList(items = body.items)
+                is BoxOfficeResponse ->         ApiResult.ApiSuccess.BoxOfficeList(items = body.items)
+                is AwardsResponse ->            ApiResult.ApiSuccess.AwardsList(items = body.items)
+                is FilterResponse ->            ApiResult.ApiSuccess.FiltersList(item = body)
+                else ->                         ApiResult.ApiSuccess.Empty
             } else ApiResult.ApiError(code = response.code(), message = response.message())
         } catch (e: HttpException) {
             ApiResult.ApiError(code = e.code(), message = e.localizedMessage)

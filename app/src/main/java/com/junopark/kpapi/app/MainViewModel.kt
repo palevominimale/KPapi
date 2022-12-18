@@ -28,7 +28,7 @@ class MainViewModel(
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _uiState = MutableStateFlow<UiState>(UiState.Error.NoInternet)
     val uiState : StateFlow<UiState> get() = _uiState
-    private var filter: FilmFilter = FilmFilter()
+    private var currentPrefs: PrefsDTO = PrefsDTO()
 
     init {
         processApi()
@@ -36,16 +36,18 @@ class MainViewModel(
 
     private fun processApi() {
         scope.launch {
-            Log.w(TAG, "${prefs.getPrefs()}")
+            val currentPrefs = prefs.getPrefs()
+            Log.w(TAG, "$currentPrefs")
+            if(currentPrefs != null) this@MainViewModel.currentPrefs = currentPrefs
         }
         viewModelScope.launch {
             api.state.collect {
                 Log.w(TAG, "$it")
                 when(it) {
-                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmList(it.items,filter))
-                    is ApiResult.ApiSuccess.SingleFilm -> _uiState.emit(UiState.Ready.Single(it, filter))
+                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmList(it.items,currentPrefs))
+                    is ApiResult.ApiSuccess.SingleFilm -> _uiState.emit(UiState.Ready.Single(it, currentPrefs))
                     is ApiResult.ApiSuccess.Empty -> _uiState.emit(UiState.Ready.Empty)
-                    is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries, filter))
+                    is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries))
 
                     is ApiResult.ApiError -> _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
                     is ApiResult.ApiException -> _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
@@ -58,8 +60,8 @@ class MainViewModel(
     fun reduce(intent: UiIntent) {
         scope.launch {
             when(intent) {
-                is UiIntent.Filter.Clear -> filter = FilmFilter()
-                is UiIntent.Filter.Set -> filter = intent.filter
+                is UiIntent.Filter.Clear -> currentPrefs = currentPrefs.copy(filter = FilmFilter())
+                is UiIntent.Filter.Set -> currentPrefs = currentPrefs.copy(filter = intent.filter)
 
                 is UiIntent.Show.Favorites -> {
                     _uiState.emit(UiState.IsLoading)
@@ -75,36 +77,36 @@ class MainViewModel(
 
                 is UiIntent.Search.ByFilter -> {
                     _uiState.emit(UiState.IsLoading)
-                    if(filter.genres == null) {
+                    if(currentPrefs.genres == null) {
                         api.getByFilter(
-                            order = filter.order,
-                            type = filter.type,
-                            ratingFrom = filter.ratingFrom,
-                            ratingTo = filter.ratingTo,
-                            yearFrom = filter.yearFrom,
-                            yearTo = filter.yearTo,
+                            order = currentPrefs.filter?.order,
+                            type = currentPrefs.filter?.type,
+                            ratingFrom = currentPrefs.filter?.ratingFrom,
+                            ratingTo = currentPrefs.filter?.ratingTo,
+                            yearFrom = currentPrefs.filter?.yearFrom,
+                            yearTo = currentPrefs.filter?.yearTo,
                         )
                     } else {
                         api.getByFilter(
-                            countries = filter.countries,
-                            genres =  filter.genres,
-                            order = filter.order,
-                            type = filter.type,
-                            ratingFrom = filter.ratingFrom,
-                            ratingTo = filter.ratingTo,
-                            yearFrom = filter.yearFrom,
-                            yearTo = filter.yearTo,
-                            imdbId = filter.imdbId,
-                            keyword = filter.keyword,
+                            countries = currentPrefs.filter?.countries,
+                            genres =  currentPrefs.filter?.genres,
+                            order = currentPrefs.filter?.order,
+                            type = currentPrefs.filter?.type,
+                            ratingFrom = currentPrefs.filter?.ratingFrom,
+                            ratingTo = currentPrefs.filter?.ratingTo,
+                            yearFrom = currentPrefs.filter?.yearFrom,
+                            yearTo = currentPrefs.filter?.yearTo,
+                            imdbId = currentPrefs.filter?.imdbId,
+                            keyword = currentPrefs.filter?.keyword,
                         )
                     }
 
                 }
                 is UiIntent.Search.ByKeyword -> {
                     _uiState.emit(UiState.IsLoading)
-                    if(filter.keyword != null) {
+                    if(currentPrefs.filter?.keyword != null) {
                         api.getByKeywordSearch(
-                            query = filter.keyword!!
+                            query = currentPrefs.filter?.keyword!!
                         )
                     } else {
                         _uiState.emit(UiState.Ready.Empty)
@@ -113,9 +115,9 @@ class MainViewModel(
                 }
                 is UiIntent.Search.ByName -> {
                     _uiState.emit(UiState.IsLoading)
-                    if(filter.keyword != null) {
+                    if(currentPrefs.filter?.keyword != null) {
                         api.getByKeywordSearch(
-                            query = filter.keyword!!
+                            query = currentPrefs.filter?.keyword!!
                         )
                     } else {
                         _uiState.emit(UiState.Ready.Empty)

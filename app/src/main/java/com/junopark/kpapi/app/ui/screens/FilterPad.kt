@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.junopark.kpapi.app.R
 import com.junopark.kpapi.app.ui.theme.Typography
+import com.junopark.kpapi.entities.common.CountryItem
+import com.junopark.kpapi.entities.common.GenreItem
 import com.junopark.kpapi.entities.filter.FilmFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,8 +46,8 @@ import com.junopark.kpapi.entities.filter.FilmFilter
 @Preview
 fun FilterPad(
     modifier: Modifier = Modifier,
-    genres: List<String> = listOf("1","2","3","4"),
-    countries: List<String> = listOf("1","2","3","4"),
+    genres: List<GenreItem> = listOf(GenreItem()),
+    countries: List<CountryItem> = listOf(CountryItem()),
     switchFilter: () -> Unit = {},
     filter: FilmFilter = FilmFilter(),
     updateFilter: (FilmFilter) -> Unit = {},
@@ -104,21 +106,23 @@ fun FilterPad(
                     steps = 9,
                     valueRange = 0f..10f
                 )
+                val genresList = genres.map { it.genre ?: "null" }
                 DropdownList(
-                    items = genres,
+                    items = genresList,
                     label = stringResource(id = R.string.search_genres),
                     modifier = Modifier.padding(bottom = 8.dp),
-                    onSelect = {
-                        newFilter = newFilter.copy(genres = it)
+                    onSelect = { selected ->
+                        newFilter = newFilter.copy(genres = genres.last { it.genre == selected }.id.toString())
                         updateFilter(newFilter)
                     }
                 )
+                val countriesList = countries.map { it.country ?: "null" }
                 DropdownList(
-                    items = countries,
+                    items = countriesList,
                     label = stringResource(id = R.string.search_countries),
                     modifier = Modifier.padding(bottom = 8.dp),
-                    onSelect = {
-                        newFilter = newFilter.copy(countries = it)
+                    onSelect = { selected ->
+                        newFilter = newFilter.copy(countries = countries.last { it.country == selected }.id.toString())
                         updateFilter(newFilter)
                     }
                 )
