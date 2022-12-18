@@ -7,17 +7,10 @@ import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
+import com.junopark.kpapi.domain.usecases.PrefsUseCase
 import com.junopark.kpapi.domain.usecases.RoomUseCase
-import com.junopark.kpapi.entities.ListResponse
-import com.junopark.kpapi.entities.facts.FactsResponse
-import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.filter.FilmFilter
-import com.junopark.kpapi.entities.filter.FilterResponse
-import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
-import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
-import com.junopark.kpapi.entities.seasons.SeasonsResponse
-import com.junopark.kpapi.entities.similar.SimilarResponse
-import com.junopark.kpapi.entities.top.TopResponse
+import com.junopark.kpapi.entities.prefs.PrefsDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +21,8 @@ private const val TAG = "MVM"
 
 class MainViewModel(
     private val api: ApiRepo,
-    private val db: RoomUseCase
+    private val db: RoomUseCase,
+    private val prefs: PrefsUseCase
 ) : ViewModel() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -41,87 +35,21 @@ class MainViewModel(
     }
 
     private fun processApi() {
+        scope.launch {
+            Log.w(TAG, "${prefs.getPrefs()}")
+        }
         viewModelScope.launch {
             api.state.collect {
+                Log.w(TAG, "$it")
                 when(it) {
-                    is ApiResult.ApiSuccess -> {
-                        when(it.data) {
-                            is ListResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as ListResponse).filmItemBigs.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-                                    _uiState.emit(UiState.Ready.FilmList((it.data as ListResponse).filmItemBigs, filter))
-                                }
-                            }
-                            is FilteredSearchResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as FilteredSearchResponse).items.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-                                    _uiState.emit(UiState.Ready.FilmList((it.data as FilteredSearchResponse).items, filter))
-                                }
-                            }
-                            is KeywordSearchResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as KeywordSearchResponse).films.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-                                    _uiState.emit(UiState.Ready.FilmList((it.data as KeywordSearchResponse).films, filter))
-                                }
-                            }
-                            is FilmItemBig -> {
-                                Log.w(TAG, it.toString())
-                                _uiState.emit(UiState.Ready.Single(it.data, filter))
-                            }
-                            is SeasonsResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as SeasonsResponse).items.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
-                                }
-                            }
-                            is SimilarResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as SimilarResponse).items.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
-                                }
-                            }
-                            is FactsResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as FactsResponse).items.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
+                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmList(it.items,filter))
+                    is ApiResult.ApiSuccess.SingleFilm -> _uiState.emit(UiState.Ready.Single(it, filter))
+                    is ApiResult.ApiSuccess.Empty -> _uiState.emit(UiState.Ready.Empty)
+                    is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries, filter))
 
-                                }
-                            }
-                            is FilterResponse -> {
-                                Log.w(TAG, it.toString())
-                            }
-                            is TopResponse -> {
-                                Log.w(TAG, it.toString())
-                                if((it.data as TopResponse).films.isEmpty()) {
-                                    _uiState.emit(UiState.Ready.Empty)
-                                } else {
-//                                    _uiState.emit(UiState.Ready.FilmList(it.data, filter))
-                                }
-                            }
-                            else -> {
-                                Log.w(TAG, "unexpected data: $it")
-                            }
-                        }
-                    }
-                    is ApiResult.ApiError -> {
-                        Log.w(TAG, "error: $it")
-                        _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
-                    }
-                    is ApiResult.ApiException -> {
-                        Log.w(TAG, "exception: $it")
-                        _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
-                    }
+                    is ApiResult.ApiError -> _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
+                    is ApiResult.ApiException -> _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                    else -> {}
                 }
             }
         }

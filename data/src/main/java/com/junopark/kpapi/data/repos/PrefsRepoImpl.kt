@@ -18,6 +18,6 @@ class PrefsRepoImpl(
     override fun setPrefs(prefs: PrefsDTO) {
         editor.putString(prefsName, gson.toJson(prefs)).commit()
     }
-
     override fun getPrefs(): PrefsDTO = gson.fromJson(prefs.getString(prefsName, ""), PrefsDTO::class.java)
+    override fun checkPrefs() = prefs.getString(prefsName, "false") != "false"
 }

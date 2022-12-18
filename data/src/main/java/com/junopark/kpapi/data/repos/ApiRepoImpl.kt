@@ -5,6 +5,15 @@ package com.junopark.kpapi.data.repos
 import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
+import com.junopark.kpapi.entities.ListResponse
+import com.junopark.kpapi.entities.awards.AwardsResponse
+import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
+import com.junopark.kpapi.entities.distribution.DistributionResponse
+import com.junopark.kpapi.entities.facts.FactsResponse
+import com.junopark.kpapi.entities.films.FilmItemBig
+import com.junopark.kpapi.entities.filter.FilterResponse
+import com.junopark.kpapi.entities.seasons.SeasonsResponse
+import com.junopark.kpapi.entities.similar.SimilarResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
@@ -13,11 +22,9 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val TAG = "ARI"
-
 class ApiRepoImpl : ApiRepo {
 
-    private val apiState = MutableStateFlow<ApiResult>(ApiResult.ApiSuccess(false))
+    private val apiState = MutableStateFlow<ApiResult>(ApiResult.ApiSuccess.Empty)
     override val state : StateFlow<ApiResult> get() = apiState
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor {
@@ -42,8 +49,18 @@ class ApiRepoImpl : ApiRepo {
         return try {
             val response = execute.invoke().execute()
             val body = response.body()
-            if(response.isSuccessful && body != null) ApiResult.ApiSuccess(data = body)
-            else ApiResult.ApiError(code = response.code(), message = response.message())
+            if(response.isSuccessful && body != null) when(body) {
+                is ListResponse ->          ApiResult.ApiSuccess.FilmList(items = body.filmItemBigs)
+                is SimilarResponse ->       ApiResult.ApiSuccess.FilmList(items = body.items)
+                is FilmItemBig ->           ApiResult.ApiSuccess.SingleFilm(item = body)
+                is SeasonsResponse ->       ApiResult.ApiSuccess.EpisodesList(items = body.items)
+                is FactsResponse ->         ApiResult.ApiSuccess.FactsList(items = body.items)
+                is DistributionResponse ->  ApiResult.ApiSuccess.DistributionList(items = body.items)
+                is BoxOfficeResponse ->     ApiResult.ApiSuccess.BoxOfficeList(items = body.items)
+                is AwardsResponse ->        ApiResult.ApiSuccess.AwardsList(items = body.items)
+                is FilterResponse ->        ApiResult.ApiSuccess.FiltersList(item = body)
+                else ->                     ApiResult.ApiSuccess.Empty
+            } else ApiResult.ApiError(code = response.code(), message = response.message())
         } catch (e: HttpException) {
             ApiResult.ApiError(code = e.code(), message = e.localizedMessage)
         } catch (e: Throwable) {

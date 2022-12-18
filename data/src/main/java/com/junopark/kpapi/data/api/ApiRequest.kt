@@ -7,7 +7,6 @@ import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
 import com.junopark.kpapi.entities.distribution.DistributionResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
-import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilterResponse
 import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
 import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
@@ -50,7 +49,7 @@ interface ApiRequest {
     fun getSimilar(@Path("id") id: Int) : Call<SimilarResponse>
 
     @GET("v2.1/films/{id}/sequels_and_prequels")
-    fun getRelated(@Path("id") id: Int) : Call<List<FilmItemMini>>
+    fun getRelated(@Path("id") id: Int) : Call<List<FilmItemBig>>
 
     @GET("v2.2/films/filters")
     fun getFilters() : Call<FilterResponse>
