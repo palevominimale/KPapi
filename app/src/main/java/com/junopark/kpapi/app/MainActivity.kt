@@ -2,9 +2,7 @@ package com.junopark.kpapi.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
@@ -21,7 +19,6 @@ import com.junopark.kpapi.app.ui.screens.*
 import com.junopark.kpapi.app.ui.theme.KPapiTheme
 import com.junopark.kpapi.entities.common.CountryItem
 import com.junopark.kpapi.entities.common.GenreItem
-import com.junopark.kpapi.entities.filter.FilmFilter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,9 +38,8 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberBottomSheetScaffoldState(
                     bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
                 )
-                var filter by remember { mutableStateOf(FilmFilter()) }
-                val countries by remember { mutableStateOf(listOf(CountryItem())) }
-                val genres by remember { mutableStateOf(listOf(GenreItem())) }
+                var countries by remember { mutableStateOf(listOf(CountryItem())) }
+                var genres by remember { mutableStateOf(listOf(GenreItem())) }
                 val scope = rememberCoroutineScope()
                 val listState = LazyListState(0)
                 if(state.value == UiState.Splash) {
@@ -71,7 +67,11 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             state = state.value,
                             reducer = { intent -> vm.reduce(intent) },
-                            listState = listState
+                            listState = listState,
+                            setPrefs = { prefs ->
+                                genres = prefs.genres ?: emptyList()
+                                countries = prefs.countries ?: emptyList()
+                            }
                         )
                     }
                 }

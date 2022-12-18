@@ -9,6 +9,7 @@ import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
 import com.junopark.kpapi.domain.usecases.PrefsUseCase
 import com.junopark.kpapi.domain.usecases.RoomUseCase
+import com.junopark.kpapi.entities.common.GenreItem
 import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.prefs.PrefsDTO
 import kotlinx.coroutines.CoroutineScope
@@ -28,8 +29,8 @@ class MainViewModel(
     private val scope = CoroutineScope(Dispatchers.IO)
     private val _uiState = MutableStateFlow<UiState>(UiState.Error.NoInternet)
     private var previousState : UiState = UiState.Ready.Empty
-    val uiState : StateFlow<UiState> get() = _uiState
     private var currentPrefs: PrefsDTO = PrefsDTO()
+    val uiState : StateFlow<UiState> get() = _uiState
 
     init {
         processApi()

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
+import com.junopark.kpapi.entities.prefs.PrefsDTO
 
 @Composable
 fun NavigationGraph(
@@ -16,7 +17,8 @@ fun NavigationGraph(
     navController: NavHostController,
     state: UiState,
     reducer: (UiIntent) -> Unit,
-    listState: LazyListState
+    listState: LazyListState,
+    setPrefs: (PrefsDTO) -> Unit = {}
 ) {
 
     NavHost(
@@ -30,15 +32,18 @@ fun NavigationGraph(
         composable(NavigationItem.List.route) {
             when(state) {
                 is UiState.IsLoading -> ListScreen(modifier = modifier)
-                is UiState.Ready.FilmList -> ListScreen(
-                    modifier = modifier,
-                    items = state.data,
-                    onSelect = { id ->
-                        navController.navigate(NavigationItem.Single.route)
-                        reducer(UiIntent.Search.ById(id))
-                    },
-                    state = listState
-                )
+                is UiState.Ready.FilmList -> {
+                    ListScreen(
+                        modifier = modifier,
+                        items = state.data,
+                        onSelect = { id ->
+                            navController.navigate(NavigationItem.Single.route)
+                            reducer(UiIntent.Search.ById(id))
+                        },
+                        state = listState,
+                    )
+                    setPrefs(state.prefs)
+                }
                 else -> {}
             }
         }
