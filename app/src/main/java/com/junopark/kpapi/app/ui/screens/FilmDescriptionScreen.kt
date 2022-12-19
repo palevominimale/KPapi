@@ -27,18 +27,20 @@ import com.junopark.kpapi.app.ui.theme.Typography
 
 
 @Composable
-
-fun FilmDescriptionScreen(item: FilmItemBig) {
+@Preview
+fun FilmDescriptionScreen(
+    item: FilmItemBig = FilmItemBig(),
+    modifier: Modifier = Modifier) {
     val genres = item.genreItems.map {
         it.genre ?: "no genre"
     }
     val country = item.countries.map {
         it.country ?: "no country"
     }
-    Surface(modifier = Modifier.fillMaxWidth()) {
+    Surface(modifier = modifier.fillMaxWidth()) {
         Column(
 
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = modifier.padding(top = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
             var phState by remember { mutableStateOf(true) }
             AsyncImage(
@@ -100,7 +102,7 @@ fun FilmDescriptionScreen(item: FilmItemBig) {
                    style = Typography.labelSmall)
                
            }
-            Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+            Spacer(modifier = modifier.padding(horizontal = 2.dp))
             Text(
                 text = item.description.toString(),
                 style = Typography.labelSmall,
