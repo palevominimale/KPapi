@@ -23,12 +23,8 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = "splash"
+        startDestination = "list"
     ) {
-
-        composable(NavigationItem.Splash.route) {
-            SplashScreen()
-        }
         composable(NavigationItem.List.route) {
             when(state) {
                 is UiState.IsLoading -> ListScreen(modifier = modifier)
@@ -71,6 +67,7 @@ fun NavigationGraph(
                 else -> {}
             }
         }
+
         composable(NavigationItem.Error.route) {
             when(state) {
                 is UiState.Error.NoInternet -> NoInternetScreen(
@@ -84,14 +81,14 @@ fun NavigationGraph(
     }
 
     when(state) {
-    is UiState.IsLoading -> {}
-    is UiState.Ready.Favorites -> navController.navigate(NavigationItem.List.route)
-    is UiState.Ready.FilmList -> navController.navigate(NavigationItem.List.route)
-    is UiState.Ready.Single -> navController.navigate(NavigationItem.Single.route)
-    is UiState.Error.HttpError -> navController.navigate(NavigationItem.Error.route)
-    is UiState.Error.Exception -> navController.navigate(NavigationItem.Error.route)
-    is UiState.Error.NoInternet -> navController.navigate(NavigationItem.Error.route)
-    is UiState.Ready.Empty -> navController.navigate(NavigationItem.Error.route)
-    else -> {}
-}
+        is UiState.IsLoading -> {}
+        is UiState.Ready.Favorites -> navController.navigate(NavigationItem.List.route) { launchSingleTop = true }
+        is UiState.Ready.FilmList -> navController.navigate(NavigationItem.List.route) { launchSingleTop = true }
+        is UiState.Ready.Single -> navController.navigate(NavigationItem.Single.route) { launchSingleTop = true }
+        is UiState.Error.HttpError -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
+        is UiState.Error.Exception -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
+        is UiState.Error.NoInternet -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
+        is UiState.Ready.Empty -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
+        else -> {}
+    }
 }

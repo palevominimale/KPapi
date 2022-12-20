@@ -9,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.junopark.kpapi.app.navigation.NavigationGraph
@@ -76,36 +75,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-@Preview
-fun DefaultPreview() {
-    KPapiTheme {
-        val scaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-        )
-        val scope = rememberCoroutineScope()
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 72.dp,
-            topBar = { TopBar(label = "KP Api test App") },
-            sheetContent = { FilterPad(
-                switchFilter = {
-                    scope.launch {
-                        if (scaffoldState.bottomSheetState.isCollapsed) {
-                            scaffoldState.bottomSheetState.expand()
-                        } else {
-                            scaffoldState.bottomSheetState.collapse()
-                        }
-                    }
-                }
-            ) }
-        ) {
-
         }
     }
 }

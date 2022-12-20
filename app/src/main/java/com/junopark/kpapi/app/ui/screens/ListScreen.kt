@@ -1,11 +1,10 @@
 package com.junopark.kpapi.app.ui.screens
 
-import androidx.activity.compose.BackHandler
+import android.text.style.ClickableSpan
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -39,7 +38,7 @@ import com.junopark.kpapi.entities.films.FilmItemBig
 @Preview
 fun ListScreen(
     modifier: Modifier = Modifier,
-    items: List<FilmItemBig> = listOf(FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),FilmItemBig(),),
+    items: List<FilmItemBig> = emptyList(),
     onSelect: (Int) -> Unit = {},
     state: LazyListState = LazyListState(0)
 ) {
@@ -50,16 +49,25 @@ fun ListScreen(
 
     LazyColumn(
         state = state,
+        userScrollEnabled = items.isNotEmpty(),
         modifier = modifier
             .fillMaxSize()
     ) {
-        items.forEach {
-            item {
-                FilmItem(
-                    item = it,
-                    highlight = highlight,
-                    onSelect = { onSelect(it) }
-                )
+        if(items.isNotEmpty()) {
+            items.forEach {
+                item {
+                    FilmItem(
+                        item = it,
+                        highlight = highlight,
+                        onSelect = { onSelect(it) }
+                    )
+                }
+            }
+        } else {
+            repeat(5) {
+                item {
+                    FilmItem(highlight = highlight, clickable = false)
+                }
             }
         }
     }
@@ -68,9 +76,10 @@ fun ListScreen(
 
 @Composable
 fun FilmItem(
-    item: FilmItemBig,
+    item: FilmItemBig? = null,
     highlight: PlaceholderHighlight,
-    onSelect: (Int) -> Unit
+    onSelect: (Int) -> Unit = {},
+    clickable: Boolean = true
 ) {
 
     Surface(
@@ -80,13 +89,21 @@ fun FilmItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable {
-                if (item.filmId != null) {
+            .clickable(
+                enabled = clickable
+            ) {
+                if (item?.filmId != null) {
                     onSelect(item.filmId!!)
-                } else if (item.kinopoiskId != null) {
+                } else if (item?.kinopoiskId != null) {
                     onSelect(item.kinopoiskId!!)
                 }
             }
+            .placeholder(
+                visible = item == null || item == FilmItemBig(),
+                highlight = highlight,
+                color = Color.LightGray,
+                shape = RoundedCornerShape(20.dp)
+            )
     ) {
         Row(
             modifier = Modifier.padding(8.dp)
@@ -96,7 +113,7 @@ fun FilmItem(
                 model = ImageRequest.Builder(LocalContext.current)
                     .memoryCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)
-                    .data(item.posterUrl)
+                    .data(item?.posterUrl)
                     .error(R.drawable.ic_movies_24)
                     .crossfade(true)
                     .build(),
@@ -126,30 +143,30 @@ fun FilmItem(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp)
             ) {
-                if(!item.nameRu.isNullOrBlank()) {
-                    Text(text = "${item.nameRu} (${item.year})", style = Typography.labelMedium)
-                } else if(!item.nameOriginal.isNullOrBlank()) {
-                    Text(text = "${item.nameOriginal} (${item.year})", style = Typography.labelMedium)
+                if(!item?.nameRu.isNullOrBlank()) {
+                    Text(text = "${item?.nameRu} (${item?.year})", style = Typography.labelMedium)
+                } else if(!item?.nameOriginal.isNullOrBlank()) {
+                    Text(text = "${item?.nameOriginal} (${item?.year})", style = Typography.labelMedium)
                 }
-                if(!item.nameEn.isNullOrBlank()) {
-                    Text(text = item.nameEn.toString(), style = Typography.labelSmall)
+                if(!item?.nameEn.isNullOrBlank()) {
+                    Text(text = item?.nameEn.toString(), style = Typography.labelSmall)
                 }
-                if(!item.description.isNullOrBlank()) {
+                if(!item?.description.isNullOrBlank()) {
                     Text(
-                        text = item.description.toString(),
+                        text = item?.description.toString(),
                         style = Typography.labelMedium,
                         maxLines = 5,
                         overflow = TextOverflow.Ellipsis
                     )
-                } else if(!item.shortDescription.isNullOrBlank()) {
+                } else if(!item?.shortDescription.isNullOrBlank()) {
                     Text(
-                        text = item.shortDescription.toString(),
+                        text = item?.shortDescription.toString(),
                         style = Typography.labelMedium,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                if(item.genreItems.isNotEmpty()) {
+                if(item?.genreItems?.isNotEmpty() == true) {
                     val genres = item.genreItems.map {
                         it.genre ?: "no genre"
                     }
@@ -160,7 +177,7 @@ fun FilmItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                if(item.countries.isNotEmpty()) {
+                if(item?.countries?.isNotEmpty() == true) {
                     val countries = item.countries.map {
                         it.country ?: "no country"
                     }
@@ -173,7 +190,7 @@ fun FilmItem(
                 }
 
                 Row {
-                    if(!item.filmLength.isNullOrBlank()) {
+                    if(!item?.filmLength.isNullOrBlank()) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_time_24),
                             contentDescription = null,
@@ -182,10 +199,10 @@ fun FilmItem(
                                 .padding(end = 4.dp)
                                 .size(14.dp)
                         )
-                        Text(text = item.filmLength!!, style = Typography.labelMedium)
+                        Text(text = item?.filmLength!!, style = Typography.labelMedium)
                     }
 
-                    if(item.rating != null) {
+                    if(item?.rating != null) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,

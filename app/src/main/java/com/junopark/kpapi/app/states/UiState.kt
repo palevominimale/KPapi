@@ -2,7 +2,6 @@ package com.junopark.kpapi.app.states
 
 import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.films.FilmItemMini
-import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.prefs.PrefsDTO
 
 sealed interface UiState {
