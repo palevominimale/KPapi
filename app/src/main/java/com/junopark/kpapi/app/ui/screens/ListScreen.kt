@@ -1,6 +1,7 @@
 package com.junopark.kpapi.app.ui.screens
 
 import android.text.style.ClickableSpan
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,9 +9,14 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Tab
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +32,9 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.placeholder.PlaceholderDefaults
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
@@ -33,7 +42,9 @@ import com.google.accompanist.placeholder.shimmer
 import com.junopark.kpapi.app.R
 import com.junopark.kpapi.app.ui.theme.Typography
 import com.junopark.kpapi.entities.films.FilmItemBig
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 @Preview
 fun ListScreen(
@@ -46,30 +57,114 @@ fun ListScreen(
         highlightColor = Color.White,
         animationSpec = PlaceholderDefaults.shimmerAnimationSpec
     )
+    val filmList = mutableListOf<FilmItemBig>()
+    val favsList = mutableListOf<FilmItemBig>()
+    val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(0)
+    val tabs = listOf(
+        "Search" to Icons.Default.Search,
+        "Favourites" to Icons.Default.FavoriteBorder
+    )
 
-    LazyColumn(
-        state = state,
-        userScrollEnabled = items.isNotEmpty(),
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        if(items.isNotEmpty()) {
-            items.forEach {
-                item {
-                    FilmItem(
-                        item = it,
-                        highlight = highlight,
-                        onSelect = { onSelect(it) }
-                    )
-                }
+
+    Column {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            contentColor = Color.LightGray,
+            backgroundColor = Color.White,
+            indicator = {tabPositions ->
+                Box(
+                    modifier = Modifier
+                        .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                        .height(4.dp)
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(color = Color.LightGray))
             }
-        } else {
-            repeat(5) {
-                item {
-                    FilmItem(highlight = highlight, clickable = false)
+        ) {
+            tabs.forEachIndexed { index, item ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = {scope.launch {pagerState.animateScrollToPage(index)}},
+                    modifier = Modifier.height(40.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        androidx.compose.material3.Icon(
+                            imageVector = item.second,
+                            contentDescription = null,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        androidx.compose.material3.Text(text = item.first)
+                    }
+
                 }
             }
         }
+        HorizontalPager(
+            count = 2,
+            userScrollEnabled = true,
+            state = pagerState
+        ) { page ->
+        when(page) {
+            0 -> {
+                LazyColumn(
+                    state = state,
+                    userScrollEnabled = items.isNotEmpty(),
+                    modifier = modifier
+                        .fillMaxSize()
+                ) {
+                    if(items.isNotEmpty()) {
+                        items.forEach {
+                            item {
+                                FilmItem(
+                                    item = it,
+                                    highlight = highlight,
+                                    onSelect = { onSelect(it) }
+                                )
+                            }
+                        }
+                    } else {
+                        repeat(5) {
+                            item {
+                                FilmItem(highlight = highlight, clickable = false)
+                            }
+                        }
+                    }
+                }
+            }
+            1 -> {
+                LazyColumn(
+                    state = state,
+                    userScrollEnabled = items.isNotEmpty(),
+                    modifier = modifier
+                        .fillMaxSize()
+                ) {
+                    if(items.isNotEmpty()) {
+                        items.forEach {
+                            item {
+                                FilmItem(
+                                    item = it,
+                                    highlight = highlight,
+                                    onSelect = { onSelect(it) }
+                                )
+                            }
+                        }
+                    } else {
+                        repeat(5) {
+                            item {
+                                FilmItem(highlight = highlight, clickable = false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        }
+
+
+
     }
 
 }

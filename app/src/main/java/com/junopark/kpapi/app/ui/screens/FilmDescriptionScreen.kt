@@ -61,8 +61,8 @@ fun FilmDescriptionScreen(
                 alignment = Alignment.Center,
                 modifier = Modifier
                     .padding(8.dp)
-                    .width(100.dp)
-                    .height(120.dp)
+                    .width(200.dp)
+                    .height(240.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .placeholder(
                         visible = phState,
@@ -82,7 +82,7 @@ fun FilmDescriptionScreen(
             )
             Row {
                 Text(
-                    text = item.nameEn.toString(),
+                    text = item.nameOriginal.toString(),
                     style = Typography.labelSmall
                 )
                 Text(text = ",")
@@ -107,7 +107,7 @@ fun FilmDescriptionScreen(
                    style = Typography.labelSmall)
                
            }
-            Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+            Spacer(modifier = Modifier.padding(all = 20.dp))
             Text(
                 text = item.description.toString(),
                 style = Typography.labelSmall,
