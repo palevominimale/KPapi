@@ -2,6 +2,7 @@
 
 package com.junopark.kpapi.data.repos
 
+import android.util.Log
 import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
@@ -23,6 +24,8 @@ import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+private const val TAG = "ARI"
 
 class ApiRepoImpl : ApiRepo {
 

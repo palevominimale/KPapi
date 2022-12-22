@@ -51,7 +51,10 @@ class MainViewModel(
                     is ApiResult.ApiSuccess.Empty -> _uiState.emit(UiState.Ready.Empty)
                     is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries))
                     is ApiResult.ApiError -> _uiState.emit(UiState.Error.HttpError(code = it.code ?: 0,message = it.message ?: ""))
-                    is ApiResult.ApiException -> _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                    is ApiResult.ApiException -> {
+                        _uiState.emit(UiState.Error.Exception(it.e ?: Throwable()))
+                        Log.e(TAG, "${it.e?.stackTraceToString()}")
+                    }
                     else -> {}
                 }
             }
@@ -123,13 +126,7 @@ class MainViewModel(
                 is UiIntent.Search.ByName -> {
                     previousState = _uiState.value
                     _uiState.emit(UiState.IsLoading)
-                    if(currentPrefs.filter?.keyword != null) {
-                        api.getByKeywordSearch(
-                            query = currentPrefs.filter?.keyword!!
-                        )
-                    } else {
-                        _uiState.emit(UiState.Ready.Empty)
-                    }
+                    api.getByKeywordSearch(query = intent.query)
                 }
                 is UiIntent.Search.Relevant -> {
                     previousState = _uiState.value

@@ -1,6 +1,5 @@
 package com.junopark.kpapi.app.ui.screens
 
-import android.text.style.ClickableSpan
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -194,7 +193,7 @@ fun FilmItem(
                 }
             }
             .placeholder(
-                visible = item == null || item == FilmItemBig(),
+                visible = item == null,
                 highlight = highlight,
                 color = Color.LightGray,
                 shape = RoundedCornerShape(20.dp)

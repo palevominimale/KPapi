@@ -77,7 +77,7 @@ interface ApiRequest {
 
     @GET("v2.1/films/search-by-keyword?")
     fun getByKeywordSearch(
-        @Query("keyword") query : String = "",
+        @Query("keyword") query : String = " ",
         @Query("page") page : Int = 1,
     ) : Call<KeywordSearchResponse>
 
