@@ -46,7 +46,7 @@ class MainViewModel(
             api.state.collect {
                 Log.w(TAG, "$it")
                 when(it) {
-                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmList(it.items,currentPrefs))
+                    is ApiResult.ApiSuccess.FilmList -> _uiState.emit(UiState.Ready.FilmListFlow(api.listFlow, currentPrefs))
                     is ApiResult.ApiSuccess.SingleFilm -> _uiState.emit(UiState.Ready.Single(it.item, currentPrefs))
                     is ApiResult.ApiSuccess.Empty -> _uiState.emit(UiState.Ready.Empty)
                     is ApiResult.ApiSuccess.FiltersList -> prefs.setPrefs(PrefsDTO(it.item.genres, it.item.countries))

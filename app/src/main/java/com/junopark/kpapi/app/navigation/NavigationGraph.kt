@@ -1,14 +1,17 @@
 package com.junopark.kpapi.app.navigation
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
+import com.junopark.kpapi.app.ui.screens.list.FlowListScreen
 import com.junopark.kpapi.entities.prefs.PrefsDTO
 
 @Composable
@@ -23,26 +26,8 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = "list"
+        startDestination = NavigationItem.ListFlow.route
     ) {
-        composable(NavigationItem.List.route) {
-            when(state) {
-                is UiState.IsLoading -> ListScreen(modifier = modifier)
-                is UiState.Ready.FilmList -> {
-                    ListScreen(
-                        modifier = modifier,
-                        items = state.data,
-                        onSelect = { id ->
-                            navController.navigate(NavigationItem.Single.route)
-                            reducer(UiIntent.Search.ById(id))
-                        },
-                        state = listState,
-                    )
-                    setPrefs(state.prefs)
-                }
-                else -> {}
-            }
-        }
 
         composable(NavigationItem.Single.route) {
             when(state) {
@@ -61,9 +46,9 @@ fun NavigationGraph(
 
         composable(NavigationItem.Favs.route) {
             when(state) {
-                is UiState.IsLoading -> ListScreen(modifier = modifier)
-                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data,
-                    state = listState)
+//                is UiState.IsLoading -> ListScreen(modifier = modifier)
+//                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data,
+//                    state = listState)
                 else -> {}
             }
         }
@@ -78,17 +63,34 @@ fun NavigationGraph(
                 else -> {}
             }
         }
+
+        composable(NavigationItem.ListFlow.route) {
+            val flowListState = rememberLazyListState(0,0)
+            when(state) {
+                is UiState.Ready.FilmListFlow -> {
+                    val list = state.data.collectAsLazyPagingItems()
+                    FlowListScreen(
+                        modifier = modifier,
+                        items = list,
+                        state = flowListState
+                    )
+                setPrefs(state.prefs)
+                }
+                else -> {}
+            }
+        }
     }
 
     when(state) {
         is UiState.IsLoading -> {}
-        is UiState.Ready.Favorites -> navController.navigate(NavigationItem.List.route) { launchSingleTop = true }
-        is UiState.Ready.FilmList -> navController.navigate(NavigationItem.List.route) { launchSingleTop = true }
-        is UiState.Ready.Single -> navController.navigate(NavigationItem.Single.route) { launchSingleTop = true }
-        is UiState.Error.HttpError -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
-        is UiState.Error.Exception -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
-        is UiState.Error.NoInternet -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
-        is UiState.Ready.Empty -> navController.navigate(NavigationItem.Error.route) { launchSingleTop = true }
+        is UiState.Ready.Favorites ->       navController.navigate(NavigationItem.List.route)       { launchSingleTop = true }
+//        is UiState.Ready.FilmList ->        navController.navigate(NavigationItem.List.route)       { launchSingleTop = true }
+        is UiState.Ready.FilmListFlow ->    navController.navigate(NavigationItem.ListFlow.route)   { launchSingleTop = true }
+        is UiState.Ready.Single ->          navController.navigate(NavigationItem.Single.route)     { launchSingleTop = true }
+        is UiState.Error.HttpError ->       navController.navigate(NavigationItem.Error.route)      { launchSingleTop = true }
+        is UiState.Error.Exception ->       navController.navigate(NavigationItem.Error.route)      { launchSingleTop = true }
+        is UiState.Error.NoInternet ->      navController.navigate(NavigationItem.Error.route)      { launchSingleTop = true }
+        is UiState.Ready.Empty ->           navController.navigate(NavigationItem.Error.route)      { launchSingleTop = true }
         else -> {}
     }
 }

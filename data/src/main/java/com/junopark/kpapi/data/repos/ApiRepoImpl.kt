@@ -3,6 +3,13 @@
 package com.junopark.kpapi.data.repos
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
@@ -17,6 +24,9 @@ import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
 import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
 import com.junopark.kpapi.entities.seasons.SeasonsResponse
 import com.junopark.kpapi.entities.similar.SimilarResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
@@ -29,8 +39,20 @@ private const val TAG = "ARI"
 
 class ApiRepoImpl : ApiRepo {
 
+    private val scope = CoroutineScope(Dispatchers.IO)
     private val apiState = MutableStateFlow<ApiResult>(ApiResult.ApiSuccess.Empty)
+    private var loader : suspend (Int) -> ApiResult = { ApiResult.ApiSuccess.FilmList(emptyList()) }
     override val state : StateFlow<ApiResult> get() = apiState
+    override var listFlow: Flow<PagingData<FilmItemBig>> = Pager(PagingConfig(pageSize = 20)) {
+        ListSource {
+            Log.w(TAG, loader.hashCode().toString())
+            when(val res = loader(it)) {
+                is ApiResult.ApiSuccess.FilmList -> { res.items }
+                else -> emptyList()
+            }
+        }
+    }.flow.cachedIn(scope)
+
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor {
             val request = it.request().newBuilder()
@@ -53,9 +75,10 @@ class ApiRepoImpl : ApiRepo {
     private suspend fun <T> handleApi(execute: suspend () -> Call<T>) : ApiResult {
         return try {
             val response = execute.invoke().execute()
+            Log.w(TAG, response.body().toString())
             val body = response.body()
             if(response.isSuccessful && body != null) when(body) {
-                is ListResponse ->              ApiResult.ApiSuccess.FilmList(items = body.items)
+                is ListResponse ->              ApiResult.ApiSuccess.FilmList(items = body.items, pages = body.pagesCount ?: 1)
                 is SimilarResponse ->           ApiResult.ApiSuccess.FilmList(items = body.items)
                 is KeywordSearchResponse ->     ApiResult.ApiSuccess.FilmList(items = body.films)
                 is FilteredSearchResponse ->    ApiResult.ApiSuccess.FilmList(items = body.items)
@@ -75,7 +98,18 @@ class ApiRepoImpl : ApiRepo {
         }
     }
 
-    override suspend fun getTop(type: String, page: Int) = apiState.emit(handleApi { retrofit.getTop(type, page) })
+    override suspend fun getTop(type: String, page: Int) {
+        apiState.emit(handleApi { retrofit.getTop(type, page) })
+        loader = { handleApi { retrofit.getTop(type, it) } }
+        listFlow = Pager(PagingConfig(pageSize = 20)) {
+            ListSource {
+                when(val res = loader(it)) {
+                    is ApiResult.ApiSuccess.FilmList -> { res.items }
+                    else -> emptyList()
+                }
+            }
+        }.flow.cachedIn(scope)
+    }
     override suspend fun getById(id: Int) = apiState.emit(handleApi { retrofit.getById(id) })
     override suspend fun getSeasons(id: Int) = apiState.emit(handleApi { retrofit.getSeasons(id) })
     override suspend fun getFacts(id: Int) = apiState.emit(handleApi { retrofit.getFacts(id) })
@@ -97,14 +131,46 @@ class ApiRepoImpl : ApiRepo {
         imdbId: String?,
         keyword: String?,
         page: Int?
-    ) = apiState.emit(handleApi {
+    ) {
+        apiState.emit(handleApi {
             retrofit.getByFilter(countries, genres, order, type, ratingFrom, ratingTo, yearFrom, yearTo, imdbId, keyword, page)
         })
+        loader = { handleApi {
+            retrofit.getByFilter(countries, genres, order, type, ratingFrom, ratingTo, yearFrom, yearTo, imdbId, keyword, it) } }
+        listFlow = Pager(PagingConfig(pageSize = 20)) {
+            ListSource {
+                when(val res = loader(it)) {
+                    is ApiResult.ApiSuccess.FilmList -> { res.items }
+                    else -> emptyList()
+                }
+            }
+        }.flow.cachedIn(scope)
+    }
 
-    override suspend fun getByKeywordSearch(query: String, page: Int) =
+    override suspend fun getByKeywordSearch(query: String, page: Int) {
         apiState.emit(handleApi { retrofit.getByKeywordSearch(query, page) })
+        loader =  { handleApi { retrofit.getByKeywordSearch(query, it) } }
+        listFlow = Pager(PagingConfig(pageSize = 20)) {
+            ListSource {
+                when(val res = loader(it)) {
+                    is ApiResult.ApiSuccess.FilmList -> { res.items }
+                    else -> emptyList()
+                }
+            }
+        }.flow.cachedIn(scope)
+    }
 
-    override suspend fun getReleases(year: Int, month: String, page: Int) =
+    override suspend fun getReleases(year: Int, month: String, page: Int) {
         apiState.emit(handleApi { retrofit.getReleases(year, month, page) })
+        loader =  { handleApi { retrofit.getReleases(year, month, it) } }
+        listFlow = Pager(PagingConfig(pageSize = 20)) {
+            ListSource {
+                when(val res = loader(it)) {
+                    is ApiResult.ApiSuccess.FilmList -> { res.items }
+                    else -> emptyList()
+                }
+            }
+        }.flow.cachedIn(scope)
+    }
 
 }

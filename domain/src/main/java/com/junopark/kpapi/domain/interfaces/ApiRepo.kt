@@ -1,11 +1,15 @@
 package com.junopark.kpapi.domain.interfaces
 
+import androidx.paging.PagingData
 import com.junopark.kpapi.domain.models.ApiResult
+import com.junopark.kpapi.entities.films.FilmItemBig
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface ApiRepo {
 
     val state : StateFlow<ApiResult>
+    val listFlow : Flow<PagingData<FilmItemBig>>
 
     suspend fun getTop(type: String = TOP_250, page: Int = 1)
     suspend fun getById(id: Int = DEFAULT_ID)

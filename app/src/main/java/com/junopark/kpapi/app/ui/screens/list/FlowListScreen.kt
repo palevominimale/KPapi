@@ -1,12 +1,13 @@
-package com.junopark.kpapi.app.ui.screens
+package com.junopark.kpapi.app.ui.screens.list
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
@@ -15,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +30,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.CachePolicy
@@ -43,12 +49,14 @@ import com.junopark.kpapi.app.ui.theme.Typography
 import com.junopark.kpapi.entities.films.FilmItemBig
 import kotlinx.coroutines.launch
 
+private const val TAG = "FLS"
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 @Preview
-fun ListScreen(
+fun FlowListScreen(
     modifier: Modifier = Modifier,
-    items: List<FilmItemBig> = emptyList(),
+    items: LazyPagingItems<FilmItemBig>? = null,
     onSelect: (Int) -> Unit = {},
     state: LazyListState = LazyListState(0)
 ) {
@@ -65,7 +73,7 @@ fun ListScreen(
         "Favourites" to Icons.Default.FavoriteBorder
     )
 
-
+    Log.w(TAG, items?.itemSnapshotList?.items.toString())
     Column {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -90,7 +98,7 @@ fun ListScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        androidx.compose.material3.Icon(
+                        Icon(
                             imageVector = item.second,
                             contentDescription = null,
                             modifier = Modifier.padding(horizontal = 8.dp)
@@ -106,60 +114,66 @@ fun ListScreen(
             userScrollEnabled = true,
             state = pagerState
         ) { page ->
-        when(page) {
-            0 -> {
-                LazyColumn(
-                    state = state,
-                    userScrollEnabled = items.isNotEmpty(),
-                    modifier = modifier
-                        .fillMaxSize()
-                ) {
-                    if(items.isNotEmpty()) {
-                        items.forEach {
-                            item {
+            when(page) {
+                0 -> {
+                    LazyColumn(
+                        state = state,
+                        userScrollEnabled = items?.itemCount != 0,
+                        modifier = modifier
+                            .fillMaxSize()
+                    ) {
+                        when(items?.loadState?.prepend) {
+                            is LoadState.NotLoading -> Unit
+                            is LoadState.Loading -> Loading()
+                            is LoadState.Error -> Unit
+                            else -> Unit
+                        }
+                        if(items != null) {
+                            items(
+                                items = items,
+                                key = {
+                                    if(it.kinopoiskId != null) it.kinopoiskId!!
+                                    else if (it.filmId != null) it.filmId!!
+                                    else it.imdbId ?: 0
+                                }
+                            ) {
                                 FilmItem(
-                                    item = it,
                                     highlight = highlight,
-                                    onSelect = { onSelect(it) }
+                                    item = it,
+                                    onSelect = { index -> onSelect(index) }
                                 )
                             }
                         }
-                    } else {
-                        repeat(5) {
-                            item {
-                                FilmItem(highlight = highlight, clickable = false)
+                    }
+                }
+                1 -> {
+                    LazyColumn(
+                        state = state,
+                        userScrollEnabled = items?.itemCount != 0,
+                        modifier = modifier
+                            .fillMaxSize()
+                    ) {
+                        when(items?.loadState?.prepend) {
+                            is LoadState.NotLoading -> Unit
+                            is LoadState.Loading -> Loading()
+                            is LoadState.Error -> Unit
+                            else -> Unit
+                        }
+                        if(items != null) {
+                            items(
+                                items = items,
+                                key = { it.kinopoiskId ?: 0 }
+                            ) {
+                                FilmItem(
+                                    highlight = highlight,
+                                    item = it,
+                                    onSelect = { index -> onSelect(index) }
+                                )
                             }
                         }
                     }
                 }
             }
-            1 -> {
-                LazyColumn(
-                    state = state,
-                    userScrollEnabled = items.isNotEmpty(),
-                    modifier = modifier
-                        .fillMaxSize()
-                ) {
-                    if(items.isNotEmpty()) {
-                        items.forEach {
-                            item {
-                                FilmItem(
-                                    item = it,
-                                    highlight = highlight,
-                                    onSelect = { onSelect(it) }
-                                )
-                            }
-                        }
-                    } else {
-                        repeat(5) {
-                            item {
-                                FilmItem(highlight = highlight, clickable = false)
-                            }
-                        }
-                    }
-                }
-            }
-        }
         }
 
 
@@ -169,7 +183,7 @@ fun ListScreen(
 }
 
 @Composable
-fun FilmItem(
+private fun FilmItem(
     item: FilmItemBig? = null,
     highlight: PlaceholderHighlight,
     onSelect: (Int) -> Unit = {},
@@ -311,5 +325,11 @@ fun FilmItem(
             }
         }
     }
-
 }
+
+private fun LazyListScope.Loading() {
+    item {
+        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+    }
+}
+
