@@ -20,7 +20,6 @@ fun NavigationGraph(
     navController: NavHostController,
     state: UiState,
     reducer: (UiIntent) -> Unit,
-    listState: LazyListState,
     setPrefs: (PrefsDTO) -> Unit = {}
 ) {
 
@@ -45,12 +44,12 @@ fun NavigationGraph(
         }
 
         composable(NavigationItem.Favs.route) {
-            when(state) {
+//            when(state) {
 //                is UiState.IsLoading -> ListScreen(modifier = modifier)
 //                is UiState.Ready.FilmList -> ListScreen(modifier = modifier, items = state.data,
 //                    state = listState)
-                else -> {}
-            }
+//                else -> {}
+//            }
         }
 
         composable(NavigationItem.Error.route) {

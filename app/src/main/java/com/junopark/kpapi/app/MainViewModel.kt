@@ -9,7 +9,6 @@ import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
 import com.junopark.kpapi.domain.usecases.PrefsUseCase
 import com.junopark.kpapi.domain.usecases.RoomUseCase
-import com.junopark.kpapi.entities.common.GenreItem
 import com.junopark.kpapi.entities.filter.FilmFilter
 import com.junopark.kpapi.entities.prefs.PrefsDTO
 import kotlinx.coroutines.CoroutineScope

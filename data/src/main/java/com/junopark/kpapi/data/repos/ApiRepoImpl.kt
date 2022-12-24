@@ -2,16 +2,10 @@
 
 package com.junopark.kpapi.data.repos
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
@@ -36,10 +30,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
-
-private const val TAG = "ARI"
 
 class ApiRepoImpl : ApiRepo {
 
@@ -49,7 +40,6 @@ class ApiRepoImpl : ApiRepo {
     override val state : StateFlow<ApiResult> get() = apiState
     override var listFlow: Flow<PagingData<FilmItemBig>> = Pager(PagingConfig(pageSize = 20)) {
         ListSource {
-            Log.w(TAG, loader.hashCode().toString())
             when(val res = loader(it)) {
                 is ApiResult.ApiSuccess.FilmList -> { res.items }
                 else -> emptyList()
@@ -82,7 +72,6 @@ class ApiRepoImpl : ApiRepo {
     private suspend fun <T> handleApi(execute: suspend () -> Call<T>) : ApiResult {
         return try {
             val response = execute.invoke().execute()
-            Log.w(TAG, response.body().toString())
             val body = response.body()
             if(response.isSuccessful && body != null) when(body) {
                 is ListResponse ->              ApiResult.ApiSuccess.FilmList(items = body.items, pages = body.pagesCount ?: 1)

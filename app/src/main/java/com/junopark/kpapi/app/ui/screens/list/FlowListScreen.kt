@@ -327,6 +327,7 @@ private fun FilmItem(
     }
 }
 
+
 private fun LazyListScope.Loading() {
     item {
         Row(
