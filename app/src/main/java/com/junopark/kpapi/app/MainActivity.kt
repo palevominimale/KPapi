@@ -73,10 +73,11 @@ class MainActivity : ComponentActivity() {
                             },
                             share = { item ->
                                 ShareCompat.IntentBuilder(this)
-                                    .setText("Смотри, что высрала мне ебаная апиха: ${item.nameRu} ${if(item.filmId != null) item.filmId else item.kinopoiskId}")
+                                    .setText("Смотри, что высрала мне ебаная апиха: ${item.nameRu} \nhttps://kinopoisk.ru/film/${if(item.filmId != null) item.filmId else item.kinopoiskId}")
                                     .setType("text/plain")
                                     .startChooser()
-                            }
+                            },
+                            favorite = { item -> vm.reduce(UiIntent.Favorites.Add(item)) }
                         )
                     }
                 }
