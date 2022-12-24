@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.TabRow
@@ -15,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -53,12 +55,14 @@ private const val TAG = "FLS"
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-@Preview
+//@Preview
 fun FlowListScreen(
     modifier: Modifier = Modifier,
     items: LazyPagingItems<FilmItemBig>? = null,
     onSelect: (Int) -> Unit = {},
-    state: LazyListState = LazyListState(0)
+    state: LazyListState = LazyListState(0),
+    share: (FilmItemBig) -> Unit = {},
+    favorite: (FilmItemBig) -> Unit = {}
 ) {
     val highlight = PlaceholderHighlight.shimmer(
         highlightColor = Color.White,
@@ -140,7 +144,9 @@ fun FlowListScreen(
                                 FilmItem(
                                     highlight = highlight,
                                     item = it,
-                                    onSelect = { index -> onSelect(index) }
+                                    onSelect = { index -> onSelect(index) },
+                                    share = { id -> share(id) },
+                                    favorite = { id -> favorite(id) }
                                 )
                             }
                         }
@@ -182,12 +188,19 @@ fun FlowListScreen(
 
 }
 
+
 @Composable
+@Preview
 private fun FilmItem(
-    item: FilmItemBig? = null,
-    highlight: PlaceholderHighlight,
+    item: FilmItemBig? = FilmItemBig(),
+    highlight: PlaceholderHighlight = PlaceholderHighlight.shimmer(
+        highlightColor = Color.White,
+        animationSpec = PlaceholderDefaults.shimmerAnimationSpec
+    ),
     onSelect: (Int) -> Unit = {},
-    clickable: Boolean = true
+    clickable: Boolean = true,
+    share: (FilmItemBig) -> Unit = {},
+    favorite: (FilmItemBig) -> Unit = {}
 ) {
 
     Surface(
@@ -216,36 +229,71 @@ private fun FilmItem(
         Row(
             modifier = Modifier.padding(8.dp)
         ) {
-            var phState by remember { mutableStateOf(true) }
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .data(item?.posterUrl)
-                    .error(R.drawable.ic_movies_24)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(100.dp)
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .placeholder(
-                        visible = phState,
-                        color = Color.LightGray,
-                        shape = RoundedCornerShape(16.dp),
-                        highlight = highlight
-                    ),
-                onState = {
-                    if(it is AsyncImagePainter.State.Success) phState = false
-                    if(it is AsyncImagePainter.State.Error) {
-                        phState = false
+            Column(
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var phState by remember { mutableStateOf(true) }
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .data(item?.posterUrl)
+                        .error(R.drawable.ic_movies_24)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(100.dp)
+                        .height(120.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .placeholder(
+                            visible = phState,
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(16.dp),
+                            highlight = highlight
+                        ),
+                    onState = {
+                        if(it is AsyncImagePainter.State.Success) phState = false
+                        if(it is AsyncImagePainter.State.Error) {
+                            phState = false
+                        }
                     }
+                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                if(item != null) share(item)
+                            }
+                    )
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                if(item != null) favorite(item)
+                            }
+                    )
                 }
-            )
+            }
+
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,

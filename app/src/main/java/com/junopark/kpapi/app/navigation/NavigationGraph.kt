@@ -12,6 +12,7 @@ import com.junopark.kpapi.app.states.UiIntent
 import com.junopark.kpapi.app.states.UiState
 import com.junopark.kpapi.app.ui.screens.*
 import com.junopark.kpapi.app.ui.screens.list.FlowListScreen
+import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.prefs.PrefsDTO
 
 @Composable
@@ -20,7 +21,9 @@ fun NavigationGraph(
     navController: NavHostController,
     state: UiState,
     reducer: (UiIntent) -> Unit,
-    setPrefs: (PrefsDTO) -> Unit = {}
+    setPrefs: (PrefsDTO) -> Unit = {},
+    share: (FilmItemBig) -> Unit = {},
+    favorite: (FilmItemBig) -> Unit = {}
 ) {
 
     NavHost(
@@ -72,7 +75,9 @@ fun NavigationGraph(
                         modifier = modifier,
                         items = list,
                         state = flowListState,
-                        onSelect = { reducer(UiIntent.Search.ById(it)) }
+                        onSelect = { reducer(UiIntent.Search.ById(it)) },
+                        share = { share(it) },
+                        favorite = { favorite(it) }
                     )
                 setPrefs(state.prefs)
                 }

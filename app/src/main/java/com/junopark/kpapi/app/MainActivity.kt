@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ShareCompat
 import androidx.navigation.compose.rememberNavController
 import com.junopark.kpapi.app.navigation.NavigationGraph
 import com.junopark.kpapi.app.states.UiIntent
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vm.reduce(UiIntent.Show.Top)
+//        vm.reduce(UiIntent.Show.Top)
         setContent {
             val state = vm.uiState.collectAsState()
             val navController = rememberNavController()
@@ -66,10 +67,15 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             state = state.value,
                             reducer = { intent -> vm.reduce(intent) },
-                            listState = listState,
                             setPrefs = { prefs ->
                                 genres = prefs.genres ?: emptyList()
                                 countries = prefs.countries ?: emptyList()
+                            },
+                            share = { item ->
+                                ShareCompat.IntentBuilder(this)
+                                    .setText("Смотри, что высрала мне ебаная апиха: ${item.nameRu} ${if(item.filmId != null) item.filmId else item.kinopoiskId}")
+                                    .setType("text/plain")
+                                    .startChooser()
                             }
                         )
                     }
