@@ -72,7 +72,8 @@ fun NavigationGraph(
                     FlowListScreen(
                         modifier = modifier,
                         items = list,
-                        state = flowListState
+                        state = flowListState,
+                        onSelect = { reducer(UiIntent.Search.ById(it)) }
                     )
                 setPrefs(state.prefs)
                 }

@@ -310,7 +310,7 @@ private fun FilmItem(
                         Text(text = item?.filmLength!!, style = Typography.labelMedium)
                     }
 
-                    if(item?.rating != null) {
+                    if(item?.rating != null && item.rating != "null") {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
@@ -329,7 +329,12 @@ private fun FilmItem(
 
 private fun LazyListScope.Loading() {
     item {
-        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        }
     }
 }
 

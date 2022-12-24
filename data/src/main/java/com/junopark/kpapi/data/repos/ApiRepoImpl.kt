@@ -10,6 +10,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
+import com.google.gson.Gson
 import com.junopark.kpapi.data.api.ApiRequest
 import com.junopark.kpapi.domain.interfaces.ApiRepo
 import com.junopark.kpapi.domain.models.ApiResult
@@ -33,6 +36,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Retrofit
+import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val TAG = "ARI"
@@ -63,11 +67,14 @@ class ApiRepoImpl : ApiRepo {
         }
         .build()
 
+    private val gson = Gson().newBuilder().create()
+    private val gsonConverterFactory = GsonConverterFactory.create(gson)
+
     private val retrofit: ApiRequest by lazy {
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(ApiRequest.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(gsonConverterFactory)
             .build()
             .create(ApiRequest::class.java)
     }
@@ -172,5 +179,4 @@ class ApiRepoImpl : ApiRepo {
             }
         }.flow.cachedIn(scope)
     }
-
 }
