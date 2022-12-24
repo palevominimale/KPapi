@@ -7,7 +7,6 @@ import com.junopark.kpapi.entities.boxoffice.BoxOfficeResponse
 import com.junopark.kpapi.entities.distribution.DistributionResponse
 import com.junopark.kpapi.entities.facts.FactsResponse
 import com.junopark.kpapi.entities.films.FilmItemBig
-import com.junopark.kpapi.entities.films.FilmItemMini
 import com.junopark.kpapi.entities.filter.FilterResponse
 import com.junopark.kpapi.entities.filteredsearch.FilteredSearchResponse
 import com.junopark.kpapi.entities.keywordsearch.KeywordSearchResponse
@@ -24,7 +23,7 @@ interface ApiRequest {
 
     @GET("v2.2/films/top")
     fun getTop(
-        @Query("type") type: String = TOP_250,
+        @Query("type") type: String? = null,
         @Query("page") page: Int = 1,
     ): Call<ListResponse>
 
@@ -50,7 +49,7 @@ interface ApiRequest {
     fun getSimilar(@Path("id") id: Int) : Call<SimilarResponse>
 
     @GET("v2.1/films/{id}/sequels_and_prequels")
-    fun getRelated(@Path("id") id: Int) : Call<List<FilmItemMini>>
+    fun getRelated(@Path("id") id: Int) : Call<List<FilmItemBig>>
 
     @GET("v2.2/films/filters")
     fun getFilters() : Call<FilterResponse>
@@ -61,13 +60,13 @@ interface ApiRequest {
         @Query("genres") genres : String? = null,
         @Query("order") order : String? = null,
         @Query("type") type : String? = null,
-        @Query("ratingFrom") ratingFrom : Int? = 0,
-        @Query("ratingTo") ratingTo : Int? = 10,
-        @Query("yearFrom") yearFrom : Int? = 1000,
-        @Query("yearTo") yearTo : Int? = 3000,
+        @Query("ratingFrom") ratingFrom : Int? = null,
+        @Query("ratingTo") ratingTo : Int? = null,
+        @Query("yearFrom") yearFrom : Int? = null,
+        @Query("yearTo") yearTo : Int? = null,
         @Query("imdbId") imdbId : String? = null,
         @Query("keyword") keyword : String? = null,
-        @Query("page") page : Int? = 1,
+        @Query("page") page : Int? = null,
     ) : Call<FilteredSearchResponse>
 
     @GET("v2.2/films?")
@@ -76,20 +75,9 @@ interface ApiRequest {
         @Query("page") page : Int? = 1,
     ) : Call<FilteredSearchResponse>
 
-    @GET("v2.2/films?")
-    fun getByFilter(
-        @Query("order") order : String? = null,
-        @Query("type") type : String? = null,
-        @Query("ratingFrom") ratingFrom : Int? = 0,
-        @Query("ratingTo") ratingTo : Int? = 10,
-        @Query("yearFrom") yearFrom : Int? = 1000,
-        @Query("yearTo") yearTo : Int? = 3000,
-        @Query("page") page : Int? = 1,
-    ) : Call<FilteredSearchResponse>
-
     @GET("v2.1/films/search-by-keyword?")
     fun getByKeywordSearch(
-        @Query("keyword") query : String = "",
+        @Query("keyword") query : String = " ",
         @Query("page") page : Int = 1,
     ) : Call<KeywordSearchResponse>
 
@@ -113,6 +101,5 @@ interface ApiRequest {
 
     companion object {
         const val BASE_URL = """https://kinopoiskapiunofficial.tech/api/"""
-        const val TOP_250 = "TOP_250_BEST_FILMS"
     }
 }

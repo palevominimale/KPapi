@@ -1,11 +1,15 @@
 package com.junopark.kpapi.domain.interfaces
 
+import androidx.paging.PagingData
 import com.junopark.kpapi.domain.models.ApiResult
+import com.junopark.kpapi.entities.films.FilmItemBig
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface ApiRepo {
 
     val state : StateFlow<ApiResult>
+    val listFlow : Flow<PagingData<FilmItemBig>>
 
     suspend fun getTop(type: String = TOP_250, page: Int = 1)
     suspend fun getById(id: Int = DEFAULT_ID)
@@ -22,21 +26,12 @@ interface ApiRepo {
         genres : String? = null,
         order : String? = null,
         type : String? = null,
-        ratingFrom : Int? = 0,
-        ratingTo : Int? = 10,
-        yearFrom : Int? = 1000,
-        yearTo : Int? = 3000,
+        ratingFrom : Int? = null,
+        ratingTo : Int? = null,
+        yearFrom : Int? = null,
+        yearTo : Int? = null,
         imdbId : String? = null,
         keyword : String? = null,
-        page : Int? = 1,
-    )
-    suspend fun getByFilter(
-        order : String? = null,
-        type : String? = null,
-        ratingFrom : Int? = 0,
-        ratingTo : Int? = 10,
-        yearFrom : Int? = 1000,
-        yearTo : Int? = 3000,
         page : Int? = 1,
     )
     suspend fun getByKeywordSearch(
