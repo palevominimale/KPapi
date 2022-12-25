@@ -5,13 +5,14 @@ import androidx.room.Room
 import com.junopark.kpapi.data.localstorage.FavsFilmsDB
 import com.junopark.kpapi.domain.interfaces.FavsFilmsDBRepo
 import com.junopark.kpapi.domain.models.RoomResult
+import com.junopark.kpapi.entities.films.FilmItemBig
 import com.junopark.kpapi.entities.films.FilmItemMini
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
 
-    private val roomState = MutableStateFlow<RoomResult>(RoomResult.Success(FilmItemMini(null)))
+    private val roomState = MutableStateFlow<RoomResult>(RoomResult.Success(FilmItemBig(null)))
     override val state: StateFlow<RoomResult> get() = roomState
 
     private val db: FavsFilmsDB = Room.databaseBuilder(
@@ -41,9 +42,9 @@ class FavsFilmsDBRepoImpl(context: Context) : FavsFilmsDBRepo {
         })
     }
 
-    override suspend fun addFilm(filmItemMini: FilmItemMini) {
+    override suspend fun addFilm(filmItemBig: FilmItemBig) {
         roomState.emit(try {
-            filmsDAO.addFilm(filmItemMini)
+            filmsDAO.addFilm(filmItemBig)
             RoomResult.Success(true)
         } catch (e:Throwable){
             RoomResult.Error(e)

@@ -4,10 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.junopark.kpapi.entities.films.FilmItemMini
+import androidx.room.TypeConverters
+import com.junopark.kpapi.entities.films.FilmItemBig
+
 private const val DATABASE_NAME = "films.db"
 
-@Database(entities = [FilmItemMini::class], version = 1)
+@Database(entities = [FilmItemBig::class], version = 1)
+@TypeConverters(Converters::class)
+
 abstract class FavsFilmsDB : RoomDatabase() {
 
     abstract fun favsFilmsDAO(): FavsFilmsDAO

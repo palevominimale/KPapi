@@ -1,11 +1,14 @@
 package com.junopark.kpapi.entities.films
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.junopark.kpapi.entities.common.CountryItem
 import com.junopark.kpapi.entities.common.GenreItem
 
+@Entity
 data class FilmItemBig(
-    @SerializedName("kinopoiskId"                ) var kinopoiskId                : Int?                 = null,
+    @SerializedName("kinopoiskId"                ) @PrimaryKey var kinopoiskId                : Int?                 = null,
     @SerializedName("filmId"                     ) var filmId                     : Int?                 = null,
     @SerializedName("imdbId"                     ) var imdbId                     : String?              = null,
     @SerializedName("nameRu"                     ) var nameRu                     : String?              = null,

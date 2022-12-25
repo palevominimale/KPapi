@@ -1,7 +1,7 @@
 package com.junopark.kpapi.domain.interfaces
 
 import com.junopark.kpapi.domain.models.RoomResult
-import com.junopark.kpapi.entities.films.FilmItemMini
+import com.junopark.kpapi.entities.films.FilmItemBig
 import kotlinx.coroutines.flow.StateFlow
 
 interface FavsFilmsDBRepo {
@@ -12,7 +12,7 @@ interface FavsFilmsDBRepo {
 
     suspend fun getFilm(id: Int)
 
-    suspend fun addFilm(filmItemMini: FilmItemMini)
+    suspend fun addFilm(filmItemBig: FilmItemBig)
 
     suspend fun removeFilm(id: Int)
 }
