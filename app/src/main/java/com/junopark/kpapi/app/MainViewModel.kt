@@ -140,7 +140,8 @@ class MainViewModel(
 
                 is UiIntent.Favorites.GetFilms -> db.getFilms()
                 is UiIntent.Favorites.GetFilm -> db.getFilm(intent.id)
-                is UiIntent.Favorites.Add -> db.addFilm(intent.item)
+                is UiIntent.Favorites.Add -> {}
+//                is UiIntent.Favorites.Add -> db.addFilm(intent.item)
                 is UiIntent.Favorites.Remove -> db.removeFilm(intent.id)
 
                 is UiIntent.Navigate.Back -> if(uiState.value != previousState) _uiState.emit(previousState)
