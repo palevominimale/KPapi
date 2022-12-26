@@ -24,7 +24,7 @@ sealed interface UiState {
             val prefs: PrefsDTO
         ) : UiState
         data class Favorites(
-            val data: FilmItemMini,
+            val data: FilmItemBig,
             val prefs: PrefsDTO
         ) : UiState
     }

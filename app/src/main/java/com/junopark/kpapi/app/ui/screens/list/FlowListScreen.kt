@@ -143,6 +143,7 @@ fun FlowListScreen(
                             ) {
                                 FilmItem(
                                     highlight = highlight,
+                                    isFavorite = favsList.contains(FilmItemBig()),
                                     item = it,
                                     onSelect = { index -> onSelect(index) },
                                     share = { id -> share(id) },
@@ -172,6 +173,7 @@ fun FlowListScreen(
                             ) {
                                 FilmItem(
                                     highlight = highlight,
+                                    isFavorite = true,
                                     item = it,
                                     onSelect = { index -> onSelect(index) }
                                 )
@@ -200,7 +202,8 @@ private fun FilmItem(
     onSelect: (Int) -> Unit = {},
     clickable: Boolean = true,
     share: (FilmItemBig) -> Unit = {},
-    favorite: (FilmItemBig) -> Unit = {}
+    favorite: (FilmItemBig) -> Unit = {},
+    isFavorite: Boolean = false,
 ) {
 
     Surface(
@@ -277,7 +280,7 @@ private fun FilmItem(
                             .padding(8.dp)
                             .clip(CircleShape)
                             .clickable {
-                                if(item != null) share(item)
+                                if (item != null) share(item)
                             }
                     )
                     Icon(
@@ -288,7 +291,7 @@ private fun FilmItem(
                             .padding(8.dp)
                             .clip(CircleShape)
                             .clickable {
-                                if(item != null) favorite(item)
+                                if (item != null) favorite(item)
                             }
                     )
                 }
